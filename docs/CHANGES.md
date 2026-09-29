@@ -2,6 +2,8 @@
 
 Estado documentado: **CFN1**, módulo `1.47-ctfnormal.1`, derivado de **KTX 1.47**, executado nos ensaios de integração com **MVDSV 1.11 Windows x64**.
 
+**Criação e manutenção do porte:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **Publicação inicial: 28/09/2026.** A atribuição ao porte não substitui os autores do código e dos módulos que lhe deram origem.
+
 O propósito é portar as armas e os efeitos de **CTFNormal / ServerModules** para C nativo KTX: Drone, Shrapnel, WeldGun, Burn, a alteração de Lightning e Hook 1.2. As regras da partida CTF, rede, física e previsão de movimento continuam pertencendo ao KTX/MVDSV. Este registro não afirma equivalência integral entre uma partida NetQuake e uma partida QuakeWorld.
 
 ## Origem e atribuição
@@ -251,6 +253,8 @@ Ainda não estão demonstrados:
 O projeto registra o que foi efetivamente testado. Contagem de assertions, compilação bem-sucedida e carregamento de mapas não são usados como substitutos de um playtest humano.
 
 ## Regressões e revisão futura
+
+Pull requests deste repositório exigem revisão e aprovação final de [@fernandosalvatori](https://github.com/fernandosalvatori). Outras revisões ajudam a avaliar as alterações, mas não substituem a aprovação exclusiva do mantenedor para incorporá-las. O formato esperado de contribuição está em [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 Mudanças neste porte devem preservar as suites existentes e acrescentar casos dirigidos quando alterarem dano, seleção, ciclo de vida ou propriedade de entidades. Os pontos de maior risco são estados que sobrevivem ao respawn/desconexão, callbacks de dano que disparam morte, fila/corrente de entidades e carregamento de regras na troca de mapa.
 
