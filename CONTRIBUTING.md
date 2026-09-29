@@ -1,62 +1,64 @@
-# Contribuir com CTF MPS KTX
+# Contributing to CTF MPS KTX
 
-O criador e mantenedor deste porte é **Fernando (Droni) Salvatori**, [@fernandosalvatori](https://github.com/fernandosalvatori). O projeto foi publicado inicialmente em **28/09/2026**, preservando a autoria preexistente de KTX, MVDSV, ServerModules e demais componentes.
+English | [Português (Brasil)](CONTRIBUTING.pt-BR.md)
 
-## Revisão e aprovação
+The creator and maintainer of this port is **Fernando (Droni) Salvatori**, [@fernandosalvatori](https://github.com/fernandosalvatori). The project was first published on **28 September 2026**, preserving the existing authorship of KTX, MVDSV, ServerModules and the other components.
 
-**Todo pull request de outros contribuidores exige revisão e aprovação de @fernandosalvatori antes de ser incorporado a este repositório. A aprovação final necessária é exclusiva do mantenedor.** Revisões de outras pessoas e testes automatizados podem apoiar a análise, mas não substituem essa aprovação.
+## Review and approval
 
-O GitHub não permite aprovar o próprio PR. PRs criados pelo mantenedor podem ser incorporados por ele mediante bypass administrativo, sempre por PR. Esse bypass também permite ao proprietário integrar outros PRs por decisão própria; não registra uma aprovação de revisão fictícia. Não há outros colaboradores com permissão de escrita na publicação inicial.
+**Every pull request from another contributor requires review and approval by @fernandosalvatori before it can be merged into this repository. The required final approval belongs exclusively to the maintainer.** Reviews by other people and automated tests can support the assessment, but do not replace this approval.
 
-A abertura de um PR, a passagem dos testes ou uma discussão favorável não significam aprovação. Após mudanças relevantes no diff, apresente novamente os resultados e aguarde a revisão da versão final. O mantenedor decide se a alteração entra no projeto e em qual versão.
+GitHub does not allow authors to approve their own PRs. The maintainer can merge their own PRs through an administrative bypass, always through a PR. This bypass also allows the owner to merge other PRs at their discretion; it does not record a review approval that did not occur. No other collaborators had write access at the initial publication.
 
-Essa política governa a incorporação de contribuições neste repositório. Ela não altera a licença do código nem declara aprovação por parte dos projetos upstream.
+Opening a PR, passing tests or receiving favorable discussion does not constitute approval. After substantive changes to the diff, provide updated results and wait for review of the final version. The maintainer decides whether a change belongs in the project and which version will include it.
 
-## Preparar uma alteração
+This policy governs contributions merged into this repository. It does not change the code license or imply endorsement by the upstream projects.
 
-Mantenha o PR concentrado em um problema ou mudança de comportamento identificável. Preserve os cabeçalhos de licença e autoria. Antes de mudar uma fórmula ou regra de arma, consulte [docs/CHANGES.md](docs/CHANGES.md) e identifique se o comportamento vem de KTX, de ServerModules ou de uma adaptação deliberada deste porte.
+## Preparing a change
 
-Quando a mudança afetar várias camadas, explique a ligação entre elas: por exemplo, seleção da arma, gasto de munição, criação de projétil, dano, morte e limpeza no respawn. Evite misturar preferências de configuração do servidor com correções de código que possam ser avaliadas separadamente.
+Keep each PR focused on an identifiable problem or behavior change. Preserve license and authorship headers. Before changing a weapon formula or rule, consult [docs/CHANGES.md](docs/CHANGES.md) and identify whether that behavior comes from KTX, ServerModules or a deliberate adaptation in this port.
 
-## O que incluir na descrição do PR
+When a change affects several layers, explain their relationship: for example, weapon selection, ammunition use, projectile creation, damage, death and respawn cleanup. Avoid mixing server configuration preferences with code fixes that can be reviewed independently.
 
-- **Problema ou objetivo:** situação concreta que motivou a alteração e resultado esperado.
-- **Antes e depois:** comportamento observável, com um exemplo que o revisor possa reproduzir.
-- **Diff explicado:** arquivos e funções relevantes, o motivo das alterações e possíveis efeitos sobre outros modos.
-- **Origem das regras:** parâmetros ou rotinas de referência, com autoria e indicação clara das diferenças deliberadas.
-- **Validação:** comandos executados, versões de compilador/engine, resultados e casos de regressão cobertos.
-- **Limites:** cenários não testados, diferenças conhecidas e o que ainda depende de partida humana ou verificação visual.
+## What to include in the PR description
 
-Uma descrição clara deve permitir a revisão sem depender de conversas privadas. Não apresente compilação, contagem de assertions ou carregamento de mapas como comprovação de uma partida completa.
+- **Problem or objective:** the concrete situation that motivated the change and the expected outcome.
+- **Before and after:** observable behavior, with an example that reviewers can reproduce.
+- **Explanation of the diff:** relevant files and functions, the reasons for changing them and possible effects on other modes.
+- **Origin of the rules:** reference parameters or routines, with attribution and a clear account of deliberate differences.
+- **Validation:** commands run, compiler and engine versions, results and regression cases covered.
+- **Limitations:** untested scenarios, known differences and anything still requiring a human playtest or visual verification.
 
-## Compilação e testes
+A clear description must support review without access to private conversations. Do not present compilation, assertion counts or map loading as proof of complete gameplay validation.
 
-O fluxo documentado usa Python 3.9 ou posterior e Zig 0.13.0 em Windows x64. Na raiz do repositório:
+## Build and tests
+
+The documented workflow uses Python 3.9 or later and Zig 0.13.0 on Windows x64. From the repository root:
 
 ```text
 python scripts/build.py --zig zig
 python scripts/test.py --zig zig
 ```
 
-Os scripts aceitam um caminho de executável em `--zig`; consulte [docs/BUILD.md](docs/BUILD.md) para `ZIG_EXE`, saídas e opções. Registre o resultado da execução atual, em vez de copiar uma contagem histórica sem rodar os testes.
+The scripts accept an executable path through `--zig`; see [docs/BUILD.md](docs/BUILD.md) for `ZIG_EXE`, outputs and options. Record the outcome of the current run instead of copying a historical count without running the tests.
 
-Para alterações de dano, seleção ou ciclo de vida, acrescente casos que reproduzam o problema e exerçam os efeitos da correção. Dê atenção a respawn, desconexão, reutilização de slot, dano aliado/próprio, callbacks de morte e remoção de entidades. Mudanças de projéteis ou gancho também precisam de validação na engine quando afetarem colisão ou movimento.
+For changes to damage, selection or entity lifecycle, add cases that reproduce the problem and exercise the fix. Pay attention to respawn, disconnection, slot reuse, teammate and self-damage, death callbacks and entity removal. Projectile or hook changes also need engine validation when they affect collision or movement.
 
-`tests/runtime.c` é uma fixture separada de integração, não parte da DLL normal produzida pelo comando de compilação acima. Se usar instrumentação, identifique-a nos resultados e mantenha-a fora do módulo de produção.
+`tests/runtime.c` is a separate integration fixture, not part of the normal DLL produced by the build command above. If you use instrumentation, identify it in the results and keep it out of the production module.
 
-Não afirme teste visual, partida humana ou execução remota de CI que não tenha ocorrido. Se uma etapa não puder ser feita, descreva a limitação de forma explícita.
+Do not claim visual testing, human gameplay or a remote CI run that did not happen. If a validation step cannot be completed, state the limitation explicitly.
 
-## Conteúdo que não deve entrar no PR
+## Content to exclude from PRs
 
-- PAKs, mapas BSP/ENT, modelos, sons ou outros assets de instalações locais e do jogo comercial.
-- Executáveis da engine, compilações, caches ou artefatos gerados que não façam parte do código revisável.
-- Credenciais, configurações privadas, tokens, endereços de serviços pessoais ou dados de jogadores.
-- Cópias de instalações pessoais, logs completos ou arquivos de diagnóstico sem revisão do conteúdo.
+- PAKs, BSP/ENT maps, models, sounds or other assets from local installations or the commercial game.
+- Engine executables, compiled binaries, caches or generated artifacts that are not part of the reviewable source.
+- Credentials, private configuration, tokens, personal service addresses or player data.
+- Copies of personal installations, full logs or diagnostic files whose contents have not been reviewed.
 
-Os recursos externos necessários aos testes de engine devem ser fornecidos localmente. Compartilhe no PR apenas o código, os passos e a evidência necessária à revisão, removendo dados privados dos trechos de log. O importador local não concede licença para redistribuir os arquivos importados.
+External resources required for engine tests must be provided locally. Include only the code, steps and evidence needed for review in the PR, removing private data from log excerpts. The local importer does not grant a license to redistribute imported files.
 
-## Autoria e licença
+## Authorship and license
 
-Conserve as atribuições de **Johannes Plass** nos módulos ServerModules e as dos demais autores nos componentes KTX e código anterior. Identifique a autoria e a origem de código novo ou adaptado sem atribuir alterações deste porte aos autores upstream.
+Preserve **Johannes Plass**'s attribution in the ServerModules modules, along with the other authors' notices in KTX components and earlier code. Identify the authorship and origin of new or adapted code without attributing this port's changes to upstream authors.
 
-Leia [LICENSE.md](LICENSE.md) e [LICENSES/NOTICE.md](LICENSES/NOTICE.md). Se a contribuição depender de código ou conteúdo de outra origem, informe essa origem e seus termos para que a compatibilidade possa ser avaliada durante a revisão.
+Read [LICENSE.md](LICENSE.md) and [LICENSES/NOTICE.md](LICENSES/NOTICE.md). If a contribution depends on code or content from another source, identify that source and its terms so compatibility can be assessed during review.

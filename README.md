@@ -1,28 +1,30 @@
 # CTF MPS KTX
 
-Porte das armas especiais do **CTFNormal / ServerModules** para **QuakeWorld**, usando **KTX 1.47** e **MVDSV 1.11**. O módulo é identificado como `1.47-ctfnormal.1` e acrescenta **Drone, Shrapnel e WeldGun**, com **Burn, as alterações de Lightning e o gancho original**.
+English | [Português (Brasil)](README.pt-BR.md)
 
-**Criador e mantenedor deste porte:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **Publicação inicial do CTF MPS KTX: 28/09/2026.** Essa atribuição identifica a criação e manutenção do porte; a autoria preexistente de KTX, MVDSV, ServerModules e dos demais componentes permanece preservada.
+A port of the **CTFNormal / ServerModules** special weapons to **QuakeWorld**, using **KTX 1.47** and **MVDSV 1.11**. The module identifies itself as `1.47-ctfnormal.1` and adds **Drone, Shrapnel and WeldGun**, along with **Burn, the Lightning modifications and the original grappling hook**.
 
-O CTF, a pontuação, o gerenciamento das equipes e o protocolo permanecem os do KTX/MVDSV. A configuração de exemplo não popula a partida com bots e mantém as runas desativadas. Este repositório reúne código, testes, documentação e configurações de exemplo; **não distribui PAKs, mapas, modelos, sons nem o executável da engine**.
+**Creator and maintainer of this port:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **CTF MPS KTX was first published on 28 September 2026.** This credit identifies the creator and maintainer of the port; the existing authorship of KTX, MVDSV, ServerModules and other components is preserved.
 
-É uma adaptação em desenvolvimento: há testes automatizados dos módulos e testes na engine, mas **não foi demonstrada equivalência integral de uma partida ao NetQuake original nem concluído um teste visual com jogador humano**.
+CTF gameplay, scoring, team management and the protocol remain under KTX/MVDSV. The example configuration does not populate matches with bots and keeps runes disabled. This repository contains code, tests, documentation and example configuration files; **it does not distribute PAKs, maps, models, sounds or the engine executable**.
 
-## Recursos e controles
+This adaptation is under development. It has automated module tests and engine tests, but **full gameplay equivalence to the original NetQuake mod has not been demonstrated, and a complete visual playtest with a human player has not been completed**.
 
-Os números são os impulses padrão de seleção. As teclas correspondentes dependem dos binds do cliente.
+## Features and controls
 
-| Recurso | Comando | Comportamento |
+The numbers below are the standard weapon selection impulses. The corresponding keys depend on the client's bindings.
+
+| Feature | Command | Behavior |
 |---|---|---|
-| WeldGun | `impulse 4` | Ao selecionar a nailgun, entra em WeldGun; repita para alternar com pregos comuns. Consome 1 prego por disparo. |
-| Drone | `impulse 6` novamente com a GL selecionada | Alterna granada/Drone. Consome 1 foguete; mantém até quatro drones por jogador. |
-| Shrapnel | `impulse 7` novamente com a RL selecionada | Alterna foguete/Shrapnel. Consome 1 foguete e libera fragmentos incendiários. |
-| Lightning | `impulse 8` | Arma elétrica com sons e descarga submersa do módulo original. |
-| Gancho | `+hook` / `-hook` | Segurar lança e mantém a tração; soltar libera. Impulses originais 98/97. |
-| Gancho alternado | `impulse 22` | Atalho adicional para lançar/liberar o mesmo gancho. |
-| Burn | Automático | Incêndio com até três camadas, contágio, extinção na água e efeitos de morte. |
+| WeldGun | `impulse 4` | Selecting the nailgun activates WeldGun; repeat to toggle between WeldGun and regular nails. Uses 1 nail per shot. |
+| Drone | `impulse 6` again while the GL is selected | Toggles between grenade and Drone modes. Uses 1 rocket; keeps up to four drones per player. |
+| Shrapnel | `impulse 7` again while the RL is selected | Toggles between rocket and Shrapnel modes. Uses 1 rocket and releases incendiary fragments. |
+| Lightning | `impulse 8` | Lightning gun with the original module's sounds and underwater discharge. |
+| Grappling hook | `+hook` / `-hook` | Hold to launch and keep pulling; release to detach. Original impulses: 98/97. |
+| Toggle hook | `impulse 22` | Additional shortcut to launch or release the same hook. |
+| Burn | Automatic | Fire with up to three layers, spread to nearby players, extinguishing in water and death effects. |
 
-Exemplo opcional para o console do cliente:
+Optional example for the client console:
 
 ```text
 alias +hook "impulse 98"
@@ -30,67 +32,67 @@ alias -hook "impulse 97"
 bind mouse3 +hook
 ```
 
-O servidor fornece os aliases, mas não substitui os binds do teclado. Também fornece `help-drone`, `help-shrapnel`, `help-weldgun` e `help-hook`, correspondentes aos impulses 215, 216, 217 e 219.
+The server provides the aliases without replacing keyboard bindings. It also provides `help-drone`, `help-shrapnel`, `help-weldgun` and `help-hook`, corresponding to impulses 215, 216, 217 and 219.
 
-### Comportamento das armas
+### Weapon behavior
 
-- **Drone:** projétil teleguiado, com vida própria, seleção e atualização de alvo, adaptação de velocidade, ricochete e explosão. Um quinto lançamento encaminha o drone mais antigo à explosão. O algoritmo foi portado do ServerModules, não de uma inteligência de bots.
-- **Shrapnel:** míssil com chama acompanhante e três ou quatro fragmentos conforme o impacto/sorteio original. Os fragmentos ricocheteiam, causam dano em área e podem incendiar alvos.
-- **WeldGun:** projéteis de metal incandescente, rápidos, com dano em área e chance de iniciar Burn.
-- **Burn:** até três camadas de fogo, cada uma com temporizador próprio. Causa dano periódico e pode espalhar fogo para personagens próximos. A água acima da cintura extingue no próximo tick de dano.
-- **Lightning:** a descarga aquática exige submersão completa e usa intensidade-base limitada a 400, consumindo as células. Os sons reagem ao deslocamento do ponto atingido e aos temporizadores originais.
-- **Gancho:** corrente com oito elos, fixação em superfícies/entidades, dano de contato, tração e balanço do ServerModules Hook 1.2. O gancho nativo KTX permanece desativado para não haver dois sistemas sobrepostos.
+- **Drone:** a homing projectile with its own health, target selection and updates, speed adaptation, ricochets and explosion. Launching a fifth drone schedules the oldest one to explode. The algorithm was ported from ServerModules; it is not derived from player-bot AI.
+- **Shrapnel:** a missile with an accompanying flame and three or four fragments, depending on the impact and the original random selection. Fragments bounce, deal radius damage and can ignite targets.
+- **WeldGun:** fast projectiles of glowing metal, with radius damage and a chance to start Burn.
+- **Burn:** up to three fire layers, each with its own timer. Deals periodic damage and can spread to nearby players. Water above waist level extinguishes the fire on the next damage tick.
+- **Lightning:** underwater discharge requires full submersion, consumes cells and caps its base strength at 400. Sounds respond to movement of the hit point and to the original timers.
+- **Grappling hook:** an eight-link chain, attachment to surfaces or entities, contact damage, pulling and swinging from ServerModules Hook 1.2. The native KTX hook remains disabled to avoid overlapping hook systems.
 
-## Estrutura do repositório
+## Repository layout
 
 ```text
-source/ktx/          KTX 1.47 com o porte em C
-tests/              Testes dos módulos e fixture de integração
-scripts/            Compilação, testes e preparação de uma instalação local
-server-example/ktx/ Configurações de exemplo, sem credenciais
-docs/CHANGES.md      Detalhamento do porte, adaptações e validação
-LICENSE.md          Texto da GNU GPL versão 2
-LICENSES/NOTICE.md  Origem e avisos de autoria/licença
+source/ktx/          KTX 1.47 with the C port
+tests/              Module tests and integration fixture
+scripts/            Build, test and local installation preparation
+server-example/ktx/ Example configuration without credentials
+docs/CHANGES.md     Detailed port notes, adaptations and validation
+LICENSE.md          GNU GPL version 2 text
+LICENSES/NOTICE.md  Origins, authorship and license notices
 ```
 
-O código original dos módulos foi convertido de QuakeC para C nativo. Ele não executa um segundo `progs.dat` dentro do KTX. O executável MVDSV é uma dependência separada.
+The original module code was converted from QuakeC to native C. It does not run a second `progs.dat` inside KTX. The MVDSV executable is a separate dependency.
 
-## Compilar e testar
+## Build and test
 
-O caminho de compilação usado neste porte é **Windows x64**, **Python 3.9 ou posterior** e **Zig 0.13.0**. A existência de outros alvos no KTX upstream não significa que este conjunto de modificações foi validado neles.
+The build path used for this port is **Windows x64**, **Python 3.9 or later** and **Zig 0.13.0**. Other targets supported by upstream KTX have not necessarily been validated with these modifications.
 
-Disponibilize `zig` no `PATH` ou substitua o argumento `--zig` pelo caminho do executável. Na raiz do repositório:
+Make `zig` available on `PATH`, or replace the `--zig` argument with the path to the executable. From the repository root:
 
 ```text
 python scripts/build.py --zig zig
 python scripts/test.py --zig zig
 ```
 
-A compilação gera `build/qwprogs.dll`; os testes gravam o resumo em `build/tests/results.json`. Ambos aceitam `ZIG_EXE` e `--out-dir`; detalhes em [docs/BUILD.md](docs/BUILD.md).
+The build produces `build/qwprogs.dll`; the tests write their summary to `build/tests/results.json`. Both scripts accept `ZIG_EXE` and `--out-dir`; see [docs/BUILD.md](docs/BUILD.md).
 
-Os testes unitários usam os arquivos C reais e substituem a fronteira da engine por respostas determinísticas. A fixture de integração é separada e só deve entrar numa compilação de teste; não é um comando administrativo da compilação normal.
+The unit tests use the actual C files and replace the engine boundary with deterministic responses. The integration fixture is separate and must only be included in a test build; it is not an administrative command in the normal build.
 
-## Preparar uma instalação local
+## Prepare a local installation
 
-Você precisa fornecer arquivos de uma instalação de Quake e do CTFNormal que possa usar, um executável MVDSV 1.11 obtido separadamente e os recursos de KTX 1.47. O script de preparação **importa arquivos locais**; não baixa dados do jogo nem a engine.
+You must supply files from Quake and CTFNormal installations you are entitled to use, a separately obtained MVDSV 1.11 executable, and the KTX 1.47 resources. The preparation script **imports local files**; it does not download game data or the engine.
 
-O diretório informado por `--quake-dir` deve conter `id1/pak0.pak` e `id1/pak1.pak`. `--ctfnormal-dir` aponta para o mod de referência com sua subpasta `Maps`. `--ktx-assets` aponta para `resources/example-configs/ktx` de uma distribuição KTX 1.47 que contenha os modelos e sons necessários.
+The directory passed to `--quake-dir` must contain `id1/pak0.pak` and `id1/pak1.pak`. `--ctfnormal-dir` points to the reference mod and its `Maps` subdirectory. `--ktx-assets` points to `resources/example-configs/ktx` in a KTX 1.47 distribution containing the required models and sounds.
 
-Exemplo, usando caminhos relativos que devem ser substituídos pelos seus:
+Example with relative paths that you must replace with your own:
 
 ```text
 python scripts/prepare_server.py --quake-dir ../quake --ctfnormal-dir ../ctfnormal --mvdsv ../mvdsv/mvdsv.exe --ktx-assets ../ktx-1.47/resources/example-configs/ktx --output ../ctf-mps-runtime
 ```
 
-Use um **diretório de saída novo**. Mantenha a instalação de origem separada para comparação. A preparação utiliza `build/qwprogs.dll` por padrão; `--progs` permite informar outro módulo compilado. Consulte `python scripts/prepare_server.py --help` para as demais validações da preparação.
+Use a **new output directory**. Keep the source installation separate for comparison. Preparation uses `build/qwprogs.dll` by default; `--progs` lets you supply another compiled module. Run `python scripts/prepare_server.py --help` for the other preparation checks.
 
-Depois de preparar a instalação, use `Iniciar.cmd`, `Status.cmd` e `Parar.cmd`. Eles operam apenas a instância registrada pelo próprio launcher, verificando o executável e o horário de início do processo antes de encerrá-lo; não dependem de RCON. Também é possível iniciar o MVDSV diretamente no diretório de execução com o módulo KTX compilado:
+After preparation, use `Iniciar.cmd` (start), `Status.cmd` (status) and `Parar.cmd` (stop). They operate only on the instance registered by the launcher itself, checking the executable and process start time before stopping it; they do not require RCON. You can also start MVDSV directly from the runtime directory with the compiled KTX module:
 
 ```text
 mvdsv.exe -basedir . -game ktx -port 27561 +exec server.cfg +map e1m1
 ```
 
-Use um cliente **QuakeWorld**. Para conectar ao servidor no mesmo computador:
+Use a **QuakeWorld** client. To connect to a server on the same computer:
 
 ```text
 disconnect
@@ -99,62 +101,62 @@ team blue
 connect localhost:27561
 ```
 
-Troque `blue` por `red` para escolher a outra equipe. Os comandos `tblue` e `tred` do mod NetQuake não são os comandos de entrada do KTX. A configuração de exemplo não cria serviço, tarefa de inicialização nem regra de encaminhamento no roteador.
+Replace `blue` with `red` to choose the other team. The NetQuake mod's `tblue` and `tred` commands are not KTX join commands. The example configuration does not create a service, a startup task or a router port-forwarding rule.
 
-## Configuração
+## Configuration
 
-| Opção | Exemplo | Finalidade |
+| Option | Example | Purpose |
 |---|---|---|
-| `k_ctfnormal` | `1` | Habilitar a extensão |
+| `k_ctfnormal` | `1` | Enable the extension |
 | `k_mode` | `4` | CTF |
-| `k_matchless` | `1` | Partida contínua |
-| `teamplay` | `4` | Proteger vida/armadura de aliados e preservar dano próprio |
-| `fraglimit` / `timelimit` | `150` / `40` | Limites da configuração de referência; podem ser alterados |
-| `sv_maxspeed` / `sv_accelerate` | `350` / `20` | Valores da configuração de referência |
-| `k_fb_enabled` | `0` | Desativar bots |
-| `k_ctf_runes` | `0` | Desativar runas |
-| `k_ctf_hook` | `0` | Desativar o gancho nativo KTX; usar o gancho portado |
-| Porta de execução | UDP `27561` | Instância de exemplo |
+| `k_matchless` | `1` | Continuous matches |
+| `teamplay` | `4` | Protect teammates' health and armor while retaining self-damage |
+| `fraglimit` / `timelimit` | `150` / `40` | Reference configuration limits; configurable |
+| `sv_maxspeed` / `sv_accelerate` | `350` / `20` | Reference configuration values |
+| `k_fb_enabled` | `0` | Disable bots |
+| `k_ctf_runes` | `0` | Disable runes |
+| `k_ctf_hook` | `0` | Disable the native KTX hook and use the ported hook |
+| Runtime port | UDP `27561` | Example instance |
 
-Os valores 150/40, hostname, porta e rotação são preferências de configuração, não requisitos das armas. A máscara de módulos `teamplay` do antigo ServerModules não pode ser copiada diretamente para uma regra de equipe do KTX.
+The 150/40 limits, hostname, port and rotation are configuration preferences, not weapon requirements. The old ServerModules `teamplay` module bitmask cannot be copied directly into a KTX team rule.
 
-As configurações do modo devem restaurar `sv_loadentfiles 1` e `sv_loadentfiles_dir ctf`, pois a inicialização de presets KTX pode limpar esse diretório. Os arquivos de exemplo mantêm os valores do CTF coerentes com a extensão. Configurações privadas de administração pertencem à instalação local e não ao repositório.
+Mode configuration must restore `sv_loadentfiles 1` and `sv_loadentfiles_dir ctf`, because KTX preset initialization may clear that directory. The example files keep CTF settings consistent with the extension. Private administration settings belong in the local installation, outside the repository.
 
-## Diferenças e limites conhecidos
+## Known differences and limitations
 
-**Física e protocolo:** movimento, previsão do cliente, mira e simulação são QuakeWorld/MVDSV. Preservar constantes das armas não torna a experiência idêntica à de NetQuake. A cadência antiga da engine não foi copiada literalmente.
+**Physics and protocol:** movement, client prediction, aiming and simulation use QuakeWorld/MVDSV. Preserving weapon constants does not make the experience identical to NetQuake. The old engine's timing was not copied literally.
 
-**HUD:** ServerModules usava bits de chaves para indicar arma alternativa e ameaça de Drone. Esses bits conflitam com a apresentação de bandeiras no CTF QuakeWorld. O porte guarda os estados separadamente e usa mensagens de modo/alerta; não promete o mesmo ícone do cliente antigo.
+**HUD:** ServerModules used key bits to indicate the alternative weapon and Drone threats. These bits conflict with flag display in QuakeWorld CTF. The port stores those states separately and uses mode and warning messages; it does not promise the original client's icon.
 
-**Escopo:** administração, ranking, menus e randomização de itens do pacote ServerModules não foram integralmente portados. O CTF nativo KTX continua responsável pela partida. O módulo opcional de proteção de spawn estava desativado na configuração de referência e não foi acrescentado.
+**Scope:** administration, rankings, menus and item randomization from the ServerModules package were not fully ported. Native KTX CTF continues to manage matches. The optional spawn-protection module was disabled in the reference configuration and was not added.
 
-**Dados:** o código e a configuração não substituem os recursos de mapa/modelo/som necessários. Não há autorização implícita para redistribuir dados comerciais de Quake junto com este projeto.
+**Data:** the code and configuration do not replace the required map, model and sound resources. This project does not implicitly authorize redistribution of commercial Quake data.
 
-## Validação registrada
+## Recorded validation
 
-| Conjunto | Resultado |
+| Suite or check | Result |
 |---|---|
-| WeldGun/Burn | 3324 verificações dos módulos C reais |
-| Shrapnel | 252 verificações dos módulos C reais |
-| Drone/Hook | 98 verificações dos módulos C reais |
-| Total unitário | **3674 verificações** |
-| MVDSV/KTX integrado | **27 verificações**, zero falhas |
-| Mapas | **20 mapas** carregados, com status correto, CTF ativo e duas bandeiras |
+| WeldGun/Burn | 3324 checks against the actual C modules |
+| Shrapnel | 252 checks against the actual C modules |
+| Drone/Hook | 98 checks against the actual C modules |
+| Unit-test total | **3674 checks** |
+| Integrated MVDSV/KTX | **27 checks**, zero failures |
+| Maps | **20 maps** loaded with correct status, active CTF and both flags |
 
-As **3674 verificações unitárias foram executadas novamente nesta árvore pública**, em Windows x64 com Zig 0.13.0, sem falhas. A DLL também foi compilada e carregada, com os exports `vmMain` e `dllEntry` verificados. Os resultados de **27 verificações na engine e 20 mapas** são registros anteriores do mesmo estado CFN1; não são executados pelo comando unitário acima. A integração exercitou seleção, munição, projéteis, fila de drones, dano real, Burn/água/morte/respawn, proteção de aliados, dano próprio, Lightning submersa e impulses do gancho. A varredura de mapas usa dados externos não distribuídos aqui.
+The **3674 unit checks were rerun against this public source tree**, on Windows x64 with Zig 0.13.0, with no failures. The DLL was also built and loaded, and its `vmMain` and `dllEntry` exports were verified. The **27 engine checks and 20 maps** are earlier results from the same CFN1 state; they are not run by the unit-test command above. Integration checks exercised selection, ammunition, projectiles, the drone queue, real damage, Burn/water/death/respawn, teammate protection, self-damage, underwater Lightning and hook impulses. The map scan uses external data not distributed here.
 
-**Ainda falta teste humano visual completo**, incluindo partidas, captura de bandeira, sensação do gancho, colisões, áudio e comportamento em rede. Os 20 mapas carregados não equivalem a 20 partidas testadas.
+**A complete visual playtest with human players is still pending**, including matches, flag captures, hook feel, collisions, audio and network behavior. Loading 20 maps is not equivalent to testing 20 matches.
 
-Veja [docs/CHANGES.md](docs/CHANGES.md) para fórmulas, pontos de integração, diferenças deliberadas e limites dos testes.
+See [docs/CHANGES.md](docs/CHANGES.md) for formulas, integration points, deliberate differences and test limitations.
 
-## Origem e licença
+## Origins and license
 
-Baseado em [KTX](https://github.com/QW-Group/ktx) e destinado a [MVDSV](https://github.com/QW-Group/mvdsv). Os módulos ServerModules portados são de **Johannes Plass, 1996–1997**, licenciados sob GPL versão 2 ou posterior. Os avisos do KTX, QWProgs e código derivado de id Software permanecem nos respectivos arquivos.
+Based on [KTX](https://github.com/QW-Group/ktx) and intended for [MVDSV](https://github.com/QW-Group/mvdsv). The ported ServerModules modules are by **Johannes Plass, 1996–1997**, licensed under GPL version 2 or later. KTX, QWProgs and id Software-derived code retain their notices in the respective files.
 
-Consulte [LICENSE.md](LICENSE.md) e [LICENSES/NOTICE.md](LICENSES/NOTICE.md). A licença do código não deve ser confundida com a licença dos dados externos do jogo. Este projeto não afirma aprovação ou integração nos projetos oficiais.
+See [LICENSE.md](LICENSE.md) and [LICENSES/NOTICE.md](LICENSES/NOTICE.md). The code license must not be confused with the license of external game data. This project does not claim endorsement by, or integration into, the official projects.
 
-## Contribuições e aprovação de PRs
+## Contributions and pull request approval
 
-Pull requests exigem revisão e aprovação de **Fernando (Droni) Salvatori, [@fernandosalvatori](https://github.com/fernandosalvatori)**, antes da incorporação neste repositório. A aprovação final necessária é exclusiva do mantenedor; revisões de outras pessoas não a substituem.
+Pull requests from other contributors require review and approval by **Fernando (Droni) Salvatori, [@fernandosalvatori](https://github.com/fernandosalvatori)** before they can be merged into this repository. The required final approval belongs exclusively to the maintainer; other reviewers' approvals do not replace it.
 
-Consulte [CONTRIBUTING.md](CONTRIBUTING.md) para apresentar alterações, testes e limitações de forma revisável.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on submitting reviewable changes, tests and limitations, including how maintainer-authored PRs are handled.
