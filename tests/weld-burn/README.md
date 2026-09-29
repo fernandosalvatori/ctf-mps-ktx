@@ -1,61 +1,63 @@
-# WeldGun e Burn: porte CTFNormal para KTX
+English | [Português (Brasil)](README.pt-BR.md)
 
-Origem: `_weldgun.qc` e `_burn.qc` do CTFNormal / ServerModules, módulos 1.0 de Johannes Plass, copyright 1996–1997, GPL versão 2 ou posterior. Os arquivos C portados preservam a autoria e a licença; ver [NOTICE](../../LICENSES/NOTICE.md).
+# WeldGun and Burn: CTFNormal port for KTX
 
-## Mecânica preservada
+Origin: `_weldgun.qc` and `_burn.qc` from CTFNormal / ServerModules, version 1.0 modules by Johannes Plass, copyright 1996–1997, GPL version 2 or later. The ported C files preserve the authorship and license; see [NOTICE](../../LICENSES/NOTICE.md).
+
+## Preserved mechanics
 
 ### WeldGun
 
-- Projétil `weld_blob`, `MOVETYPE_FLYMISSILE`, `SOLID_BBOX`, tamanho zero, velocidade 1400 e vida máxima 6 segundos.
-- Origem = origem do tiro − `(0,0,6)` + direção × 8; ângulo do modelo em X acrescido de 90 graus.
-- Modelo `progs/flame2.mdl`; iluminação no máximo uma vez por 0,2 segundo por atirador.
-- Sons originais `weapons/spike2.wav` (volume 0,6), `hknight/idle.wav` e impacto `wizard/hit.wav`.
-- Impactos no céu são removidos sem explosão/dano. Outros impactos geram sangue de intensidade 9 quando a entidade tocada recebe dano.
-- Raio de dano 60. Alvos sem `DAMAGE_AIM` recebem 10. Outros recebem `db = 11 + (0,5 − r) × 6`, entre 8 e 14. Distância medida do impacto até origem do alvo + `(0,0,16)`: dano cheio abaixo de `3 × db`, queda linear até zero em 60.
-- Ignição somente se a MESMA amostra aleatória do dano for estritamente maior que 0,85 e o dano calculado for estritamente maior que 5. A constante é `0.85f` para preservar a comparação float do QuakeC.
-- Não se introduziu verificação de visibilidade no dano de área: o QC original também não tem.
-- Impacto recua 4 unidades no vetor de movimento, imobiliza o projétil e mostra `progs/s_explod.spr`, quadros 0, 3 e 4 por 0,1 segundo cada; depois remove.
-- Seleção, custo de munição, cadência e animação do jogador pertencem à integração em `weapons.c`, não a `CFN_WeldFire` (igual à separação original).
+- `weld_blob` projectile, `MOVETYPE_FLYMISSILE`, `SOLID_BBOX`, zero size, speed 1400, and a maximum lifetime of 6 seconds.
+- Origin = shot origin − `(0,0,6)` + direction × 8; the model's X angle is increased by 90 degrees.
+- Model: `progs/flame2.mdl`; lighting occurs at most once every 0.2 seconds per shooter.
+- Original sounds: `weapons/spike2.wav` (volume 0.6), `hknight/idle.wav`, and `wizard/hit.wav` on impact.
+- Sky impacts remove the projectile without an explosion or damage. Other impacts produce blood with intensity 9 when the entity hit can take damage.
+- Damage radius: 60. Targets without `DAMAGE_AIM` take 10 damage. Other targets receive `db = 11 + (0.5 − r) × 6`, ranging from 8 to 14. Distance is measured from the impact to the target's origin + `(0,0,16)`: full damage below `3 × db`, then a linear falloff to zero at 60.
+- Ignition occurs only if the SAME random sample used for damage is strictly greater than 0.85 and the calculated damage is strictly greater than 5. The constant is `0.85f` to preserve QuakeC's float comparison.
+- No visibility check was added to area damage: the original QC has none either.
+- On impact, the projectile moves back 4 units along its movement vector, stops, and displays frames 0, 3, and 4 of `progs/s_explod.spr` for 0.1 seconds each before being removed.
+- Selection, ammunition cost, firing cadence, and player animation belong to the integration in `weapons.c`, rather than `CFN_WeldFire`, preserving the original separation of responsibilities.
 
 ### Burn
 
-- Bloqueia ignição se submersão > 1, invulnerabilidade vigente, drone, barril explosivo, alvo morto ou aliado diferente do próprio atacante.
-- Ignição própria permanece permitida. Usa times nativos KTX em lugar do campo `ctf_team` do QC.
-- Até três camadas independentes, bits 1/2/4. Cada nova camada dura 15 segundos; cada camada causa 3 pontos por tick de dano, total máximo 9 antes dos modificadores normais de combate.
-- Primeiro think em 0,1 segundo; dano a cada pouco mais de 1 segundo por comparação estrita `time > burn_damage_time`; atualização visual a cada 0,02 segundo.
-- Na expiração, a camada ainda contribui para o último tick, depois seu bit é removido, como no QC.
-- Mantidas as comparações aninhadas originais ao renovar as três camadas ocupadas. Inclusive o caso em que `lifetime1 <= lifetime2` mas `lifetime4 < lifetime1` não renova camada alguma. Não se corrigiu silenciosamente esse comportamento histórico.
-- Contágio: centro na origem da vítima + `(0,0,18)`, raio 50, dano `6 + r × 4`, chance estritamente `r > 0,5`. A amostra é compartilhada entre todos os vizinhos do mesmo tick; o crédito do contágio pertence ao jogador em chamas. Dano direto continua creditado ao atacante que iniciou a primeira camada.
-- Água acima da cintura extingue no próximo tick de dano; som `player/slimbrn2.wav` e oito bolhas em intervalos 0,1–0,3 segundo. Bolhas sobem inicialmente a 15, usam `s_bubble.spr` e depois a rotina nativa `bubble_bob` do KTX.
-- Duas chamas `flame2.mdl`, quadro 1, a 18 unidades acima do jogador e 7 atrás da direção de visão; movimentos opostos de ±2 na frente e ±4 lateralmente. Jogador morto reduz altura em 12. Chama principal produz luz.
-- Morte por outra arma extingue as chamas. Morte por Burn mantém o efeito até `DEAD_DEAD`, então remove a chama secundária e anima os quadros 0–5 de `s_explod.spr`, 0,1 segundo por quadro.
-- Dor alterna `player/lburn1.wav` / `player/lburn2.wav`, com intervalo mínimo 0,8 segundo; ignição usa `boss1/throw.wav`.
+- Ignition is blocked when the target's water level is > 1, invulnerability is active, or the target is a drone, explosive barrel, dead entity, or teammate other than the attacker.
+- Setting yourself on fire remains possible. The port uses native KTX teams in place of the QC `ctf_team` field.
+- Up to three independent layers, using bits 1/2/4. Each new layer lasts 15 seconds and deals 3 points per damage tick, for a maximum total of 9 before normal combat modifiers.
+- The first think occurs after 0.1 seconds; damage is applied slightly more than 1 second apart because of the strict `time > burn_damage_time` comparison; visual updates occur every 0.02 seconds.
+- On expiration, a layer still contributes to the last damage tick before its bit is removed, as in the QC.
+- The original nested comparisons are preserved when refreshing three occupied layers. This includes the case where `lifetime1 <= lifetime2` but `lifetime4 < lifetime1`, which refreshes no layer. This historical behavior was not silently corrected.
+- Fire spread: centered on the victim's origin + `(0,0,18)`, radius 50, damage `6 + r × 4`, with the strict probability test `r > 0.5`. The same random sample is shared by all nearby entities in that tick; fire spread is credited to the burning player. Direct damage remains credited to the attacker who started the first layer.
+- Water above the waist extinguishes the fire on the next damage tick, playing `player/slimbrn2.wav` and producing eight bubbles at intervals of 0.1–0.3 seconds. Bubbles initially rise at 15, use `s_bubble.spr`, and then use KTX's native `bubble_bob` routine.
+- Two `flame2.mdl` flames, frame 1, positioned 18 units above the player and 7 units behind their viewing direction, with opposing movements of ±2 forward and ±4 sideways. The height is reduced by 12 for a dead player. The main flame emits light.
+- Death from another weapon extinguishes the flames. Death from Burn keeps the effect until `DEAD_DEAD`, then removes the secondary flame and animates frames 0–5 of `s_explod.spr` at 0.1 seconds per frame.
+- Pain sounds alternate between `player/lburn1.wav` and `player/lburn2.wav`, with a minimum interval of 0.8 seconds; ignition uses `boss1/throw.wav`.
 
-## Adaptações à API KTX
+## KTX API adaptations
 
-- Campos próprios ficaram em `gedict_t.cfn`; referências nativas usam `EDICT_TO_PROG` / `PROG_TO_EDICT` para `owner` e `enemy`.
-- O QC `findradius` entregava uma cadeia. O builtin KTX recebe a entidade inicial da próxima busca; usa-se sua iteração por entidades, sem alterar raio, centro ou filtros.
-- Os estados `[frame, próximo_estado]` do QC foram convertidos em callbacks com `nextthink = time + 0.1`.
-- Modelos e sons são explicitamente precacheados, incluindo os que o módulo antigo herdava do precache geral de Quake.
-- As duas chamas possuem referências verificáveis e limpeza em respawn/disconnect. Referências são anuladas ao fim; a chama secundária recebe classname `burn_flame2` e o gerador de vapor recebe `burn_steam`, permitindo limpeza sem remover outra entidade.
-- O projétil Weld e a chama principal guardam o `connect_time` do atacante: se o cliente desconecta ou seu slot passa a outro jogador, dano pendente fica atribuído ao mundo. Respawn normal preserva o crédito porque não muda esse identificador. O gerador de vapor também para caso o slot da vítima seja reutilizado. Esta proteção evita uma atribuição incorreta típica de ponteiros persistentes para slots de cliente.
-- O módulo Protect separado do CTFNormal não está ativo no `teamplay 40956` usado pelo servidor de referência. Por isso este porte verifica a invulnerabilidade nativa, sem inventar uma proteção de spawn adicional.
+- Module fields are stored in `gedict_t.cfn`; native references use `EDICT_TO_PROG` / `PROG_TO_EDICT` for `owner` and `enemy`.
+- QC's `findradius` returned a chain. The KTX builtin takes the starting entity for the next search; the port uses its entity iteration without changing the radius, center, or filters.
+- QC states of the form `[frame, next_state]` were converted to callbacks with `nextthink = time + 0.1`.
+- Models and sounds are explicitly precached, including those that the old module inherited from Quake's general precaching.
+- Both flames have references that can be validated and are cleaned up on respawn/disconnect. References are cleared when their lifetime ends; the secondary flame receives classname `burn_flame2` and the steam generator receives `burn_steam`, allowing cleanup without removing another entity.
+- The Weld projectile and main flame store the attacker's `connect_time`: if the client disconnects or another player takes over the slot, pending damage is attributed to the world. Normal respawn preserves attribution because it does not change that identifier. The steam generator also stops if the victim's slot is reused. This protection prevents the incorrect attribution that persistent pointers to client slots can cause.
+- CTFNormal's separate Protect module is not active under the reference server's `teamplay 40956` setting. The port therefore checks native invulnerability without introducing additional spawn protection.
 
-## Contrato de integração com o restante do porte
+## Integration contract with the rest of the port
 
-1. Chamar `CFN_WeldPrecache` e `CFN_BurnPrecache` no precache do modo.
-2. Conectar Weld à seleção/munição/cadência original da nailgun.
-3. `CFN_Damage` precisa classificar o golpe como `CFN_WEAPON_WELD` / `CFN_WEAPON_BURN`; `T_Damage` deve registrar `cfn.killweapon` antes de disparar a morte do jogador.
-4. Em `PainSound`, após os casos de água/lava e antes dos sons de dor comuns: se Burn ativo no jogador, chamar `CFN_BurnPainSound` e retornar.
-5. Em morte por Burn: `PlayerDie` escolhe `player_dieb1`; `PlayerDead` executa `GibPlayer`; `VelocityForDamage` parte da velocidade atual e soma aleatoriedade ±80 em X/Y e 50–100 em Z; `ThrowHead` preserva velocidade/altura em vez de aplicar o deslocamento normal de −24.
-6. Chamar `CFN_BurnCleanup` em respawn/desconexão, antes de zerar os campos. Não limpar na entrada de `PlayerDie`, pois eliminaria o efeito original da morte.
+1. Call `CFN_WeldPrecache` and `CFN_BurnPrecache` when precaching the mode.
+2. Connect Weld to the nailgun's original selection, ammunition, and firing cadence.
+3. `CFN_Damage` must classify the hit as `CFN_WEAPON_WELD` / `CFN_WEAPON_BURN`; `T_Damage` must record `cfn.killweapon` before triggering player death.
+4. In `PainSound`, after the water/lava cases and before ordinary pain sounds: if Burn is active on the player, call `CFN_BurnPainSound` and return.
+5. On death from Burn: `PlayerDie` selects `player_dieb1`; `PlayerDead` calls `GibPlayer`; `VelocityForDamage` starts from the current velocity and adds random offsets of ±80 in X/Y and 50–100 in Z; `ThrowHead` preserves velocity/height instead of applying the normal −24 offset.
+6. Call `CFN_BurnCleanup` on respawn/disconnect, before clearing the fields. Do not clean up at the start of `PlayerDie`, as that would remove the original death effect.
 
-## Validação executada
+## Validation performed
 
-Na raiz do repositório, `python scripts/test.py --zig zig` compila os dois arquivos C reais com este harness e os headers do KTX, substituindo a fronteira engine/KTX por funções determinísticas. Requer Python 3.9 ou posterior e Zig 0.13.0 em Windows x64. Os resultados novos ficam em `build/tests/results.json`, junto aos logs. Veja [BUILD](../../docs/BUILD.md).
+From the repository root, `python scripts/test.py --zig zig` compiles the two actual C files with this harness and the KTX headers, replacing the engine/KTX boundary with deterministic functions. It requires Python 3.9 or later and Zig 0.13.0 on Windows x64. New results are written to `build/tests/results.json`, alongside the logs. See [BUILD](../../docs/BUILD.md).
 
-A suite Weld/Burn passou em **3324 verificações** no estado CFN1. O mesmo comando executa também **252 verificações Shrapnel** e **98 Drone/Hook**, totalizando **3674 verificações unitárias**. A contagem não inclui as verificações históricas da fixture na engine ou a varredura de mapas.
+The Weld/Burn suite passed **3324 checks** in the CFN1 state. The same command also runs **252 Shrapnel checks** and **98 Drone/Hook checks**, totaling **3674 unit checks**. This count excludes the historical in-engine fixture checks and map sweep.
 
-Há 280 combinações de valor aleatório/distância de impacto para validar a fórmula e a chance de incêndio; verificações de voo/luz/vida/quadros; bloqueios de ignição; camadas e renovação; expiração; autoria de contágio; água e oito bolhas; morte normal/Burn; limpeza idempotente; sons e limite de dor. Também são exercitados desconexão do atacante, substituição do jogador no mesmo slot e respawn legítimo com preservação do crédito.
+Coverage includes 280 random-value/impact-distance combinations to validate the formula and ignition probability; flight, lighting, lifetime, and animation frames; ignition blocking; layers and refresh behavior; expiration; attribution of fire spread; water and eight bubbles; ordinary/Burn death; idempotent cleanup; sounds and pain throttling. It also covers attacker disconnection, replacement by another player in the same slot, and legitimate respawn with attribution preserved.
 
-O harness não executa a engine nem simula previsão/rede ou colisão real em mapas. Os testes de entrada de cliente, física e aparência precisam ser feitos no servidor integrado. O dano final (armadura, Quad, regras de times) continua responsabilidade de `T_Damage`. A fixture separada da engine verificou parte dessa integração; seu escopo e limites constam em [CHANGES](../../docs/CHANGES.md).
+The harness does not run the engine or simulate prediction, networking, or actual map collisions. Client connection, physics, and appearance must be tested in the integrated server. Final damage, including armor, Quad, and team rules, remains the responsibility of `T_Damage`. The separate in-engine fixture checked part of this integration; its scope and limitations are documented in [CHANGES](../../docs/CHANGES.md).

@@ -1,263 +1,265 @@
-# CTF MPS KTX — registro técnico do porte
+# CTF MPS KTX — technical port change log
 
-Estado documentado: **CFN1**, módulo `1.47-ctfnormal.1`, derivado de **KTX 1.47**, executado nos ensaios de integração com **MVDSV 1.11 Windows x64**.
+English | [Português (Brasil)](CHANGES.pt-BR.md)
 
-**Criação e manutenção do porte:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **Publicação inicial: 28/09/2026.** A atribuição ao porte não substitui os autores do código e dos módulos que lhe deram origem.
+Documented state: **CFN1**, module `1.47-ctfnormal.1`, derived from **KTX 1.47**, with integration tests run on **MVDSV 1.11 Windows x64**.
 
-O propósito é portar as armas e os efeitos de **CTFNormal / ServerModules** para C nativo KTX: Drone, Shrapnel, WeldGun, Burn, a alteração de Lightning e Hook 1.2. As regras da partida CTF, rede, física e previsão de movimento continuam pertencendo ao KTX/MVDSV. Este registro não afirma equivalência integral entre uma partida NetQuake e uma partida QuakeWorld.
+**Port creator and maintainer:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **First published: 28 September 2026.** Attribution for this port does not replace the authors of the code and modules on which it is based.
 
-## Origem e atribuição
+The purpose is to port the weapons and effects from **CTFNormal / ServerModules** to native KTX C: Drone, Shrapnel, WeldGun, Burn, the Lightning modification, and Hook 1.2. CTF match rules, networking, physics, and movement prediction remain the responsibility of KTX/MVDSV. This record does not claim complete equivalence between a NetQuake match and a QuakeWorld match.
 
-- KTX: [QW-Group/ktx](https://github.com/QW-Group/ktx), base 1.47, com seus cabeçalhos de autoria e licença preservados.
-- Engine dos testes: [QW-Group/mvdsv](https://github.com/QW-Group/mvdsv), versão 1.11, obtida e executada separadamente.
-- Módulos portados: ServerModules de **Johannes Plass**, copyright 1996–1997, **GPL versão 2 ou posterior**.
-- Referências QuakeC: `_drone.qc`, `_shrap.qc`, `_weldgun.qc`, `_burn.qc`, `_hook.qc`, `_lightng.qc`, respectivos cabeçalhos e pontos de integração em `weapons.qc`, `combat.qc` e `player.qc`.
+## Origins and attribution
 
-Os avisos de KTX, QWProgs e código derivado de id Software permanecem por arquivo. [LICENSES/NOTICE.md](../LICENSES/NOTICE.md) identifica a relação entre o código, ferramentas externas e dados do jogo. O porte não substitui a autoria dos componentes por uma atribuição única ao projeto novo.
+- KTX: [QW-Group/ktx](https://github.com/QW-Group/ktx), based on version 1.47, with its authorship and license headers preserved.
+- Test engine: [QW-Group/mvdsv](https://github.com/QW-Group/mvdsv), version 1.11, obtained and run separately.
+- Ported modules: ServerModules by **Johannes Plass**, copyright 1996–1997, **GPL version 2 or later**.
+- QuakeC references: `_drone.qc`, `_shrap.qc`, `_weldgun.qc`, `_burn.qc`, `_hook.qc`, `_lightng.qc`, their respective headers, and integration points in `weapons.qc`, `combat.qc`, and `player.qc`.
 
-## Organização e arquivos alterados
+Notices for KTX, QWProgs, and code derived from id Software remain in their respective files. [LICENSES/NOTICE.md](../LICENSES/NOTICE.md) explains the relationship between the code, external tools, and game data. The port does not replace component authorship with a single attribution to the new project.
 
-| Arquivo | Responsabilidade do porte |
+## Organization and changed files
+
+| File | Port responsibility |
 |---|---|
-| `source/ktx/include/ctfnormal.h` | Constantes de arma e interfaces públicas da extensão |
-| `source/ktx/include/progs.h` | `cfn_state_t`: estado privado, alvos, temporizadores, donos lógicos e cadeia do gancho |
-| `source/ktx/include/g_local.h` | Inclusão da interface e identificação da versão personalizada |
-| `source/ktx/src/ctfnormal.c` | Ativação, precache, aliases, ajuda, seleção, mensagens, limpeza e wrapper de dano |
-| `source/ktx/src/ctfnormal_drone.c` | Fila de drones, navegação, contatos, dano e explosão |
-| `source/ktx/src/ctfnormal_shrapnel.c` | Míssil/chama, fragmentos, reflexão, dano e animações |
-| `source/ktx/src/ctfnormal_weld.c` | Projéteis incandescentes, luz, impacto e ignição |
-| `source/ktx/src/ctfnormal_burn.c` | Camadas de fogo, contágio, chamas, vapor, dor e remoção |
-| `source/ktx/src/ctfnormal_hook.c` | Gancho, elos, fixação, tração/balanço e remoção |
-| `source/ktx/src/weapons.c` | Integração da seleção, disparos, munição, cadências e Lightning |
-| `source/ktx/src/combat.c` | Identificação do golpe letal e tratamento especial de dano a drones |
-| `source/ktx/src/player.c` | Dor e animação de morte por fogo, velocidades de gibs e remoção do gancho |
-| `source/ktx/src/client.c` | Inicialização/limpeza de cliente, avisos e mensagens de morte |
-| `source/ktx/src/commands.c` | Seleção do preset CTF no modo contínuo da extensão |
-| `source/ktx/src/world.c` | Registro da cvar, precache e identificação correta do modo CTF |
-| `source/ktx/CMakeLists.txt` | Inclusão das unidades C novas |
-| `tests/` | Testes determinísticos e fixture específica de integração |
-| `scripts/` | Compilação, execução dos testes e preparação local de dados externos |
-| `server-example/ktx/` | Configurações de exemplo sem dados do jogo ou credenciais |
+| `source/ktx/include/ctfnormal.h` | Weapon constants and the extension's public interfaces |
+| `source/ktx/include/progs.h` | `cfn_state_t`: private state, targets, timers, logical owners, and the hook chain |
+| `source/ktx/include/g_local.h` | Interface inclusion and custom version identification |
+| `source/ktx/src/ctfnormal.c` | Activation, precaching, aliases, help, selection, messages, cleanup, and the damage wrapper |
+| `source/ktx/src/ctfnormal_drone.c` | Drone queue, navigation, contacts, damage, and explosions |
+| `source/ktx/src/ctfnormal_shrapnel.c` | Missile/flame, fragments, reflection, damage, and animations |
+| `source/ktx/src/ctfnormal_weld.c` | Incandescent projectiles, lighting, impacts, and ignition |
+| `source/ktx/src/ctfnormal_burn.c` | Fire stacks, spread, flames, steam, pain, and removal |
+| `source/ktx/src/ctfnormal_hook.c` | Hook, links, attachment, pulling/swinging, and removal |
+| `source/ktx/src/weapons.c` | Integration of selection, firing, ammunition, firing intervals, and Lightning |
+| `source/ktx/src/combat.c` | Identification of the lethal hit and special handling of damage to drones |
+| `source/ktx/src/player.c` | Fire pain and death animation, gib velocities, and hook removal |
+| `source/ktx/src/client.c` | Client initialization/cleanup, alerts, and death messages |
+| `source/ktx/src/commands.c` | CTF preset selection for the extension's continuous-play mode |
+| `source/ktx/src/world.c` | Cvar registration, precaching, and correct CTF mode identification |
+| `source/ktx/CMakeLists.txt` | Inclusion of the new C units |
+| `tests/` | Deterministic tests and a dedicated integration fixture |
+| `scripts/` | Building, running tests, and preparing external data locally |
+| `server-example/ktx/` | Example configurations without game data or credentials |
 
-O código de teste da engine é condicionado a `CFN_TEST`. Sua entrada serve à validação e não faz parte da interface administrativa da compilação de produção.
+Engine test code is conditional on `CFN_TEST`. Its entry point is for validation and is not part of the production build's administration interface.
 
-## Ativação e ciclo de vida
+## Activation and lifecycle
 
-`CFN_Enabled()` exige `k_ctfnormal` habilitado e `k_mode == 4`. O precache registra explicitamente os modelos e sons usados pelos módulos. Os recursos opcionais de Hook que estavam desativados no fonte de referência permanecem desativados; isso evita depender de arquivos adicionais não previstos naquela configuração.
+`CFN_Enabled()` requires `k_ctfnormal` to be enabled and `k_mode == 4`. Precaching explicitly registers the models and sounds used by the modules. Optional Hook resources that were disabled in the reference source remain disabled, avoiding dependencies on additional files not expected by that configuration.
 
-`ClientConnect` fornece aliases e ajuda. `PutClientInServer` e `ClientDisconnect` chamam a limpeza antes de reutilizar o estado privado. A limpeza retira drones e chamas, solicita remoção do gancho, zera `cfn` e avança a geração do jogador. O gancho verifica sua geração e o vínculo com o jogador para não controlar uma vida ou conexão posterior.
+`ClientConnect` provides aliases and help. `PutClientInServer` and `ClientDisconnect` call cleanup before reusing private state. Cleanup removes drones and flames, requests hook removal, clears `cfn`, and advances the player's generation counter. The hook checks its generation and its link to the player so it cannot control a later life or connection.
 
-`PlayerPreThink` participa da remoção do gancho quando o jogador morre, teleporta ou sai do modo. Também comunica mudanças no estado de ameaça de Drone por texto.
+`PlayerPreThink` participates in hook removal when the player dies, teleports, or leaves the mode. It also reports changes in the Drone threat state through text messages.
 
-### Seleção de arma
+### Weapon selection
 
-- A nailgun entra em WeldGun quando selecionada a partir de outra arma; repeti-la alterna Weld/pregos comuns.
-- A GL e a RL começam no comportamento convencional; a repetição da seleção alterna Drone ou Shrapnel.
-- Mudanças automáticas de arma também passam pela atualização do estado, evitando carregar um modo alternativo incompatível para outra arma.
-- Drone e Shrapnel descontam a munição dentro de suas funções de disparo. O fluxo chamador não desconta novamente.
-- Weld usa o desconto de um prego do fluxo da nailgun e preserva a correção lateral `ox -= 1` do original.
-- A integração mantém as cadências específicas de shotgun, super shotgun, GL e RL no modo CTFNormal. As cadências de disparo são distintas dos intervalos de `think` de projéteis e efeitos.
+- Selecting the nailgun from another weapon enters WeldGun mode; selecting it again toggles between Weld and ordinary nails.
+- The GL and RL initially retain their conventional behavior; selecting them again toggles Drone or Shrapnel.
+- Automatic weapon changes also update this state, preventing an incompatible alternative mode from carrying over to another weapon.
+- Drone and Shrapnel deduct ammunition inside their firing functions. The calling code does not deduct it again.
+- Weld uses the nailgun firing path's one-nail deduction and preserves the original lateral correction, `ox -= 1`.
+- The integration retains the specific shotgun, super shotgun, GL, and RL firing intervals in CTFNormal mode. Firing intervals are separate from projectile and effect `think` intervals.
 
-O sistema usa mensagens `Modo: ...` no lugar do indicador antigo por chave de inventário. Os bits de chave são utilizados pela apresentação das bandeiras no CTF QuakeWorld; reutilizá-los para armas corromperia essa apresentação.
+The system uses `Modo: ...` messages ("Mode: ...") instead of the old inventory-key indicator. Key bits are used to display flags in QuakeWorld CTF; reusing them for weapons would corrupt that display.
 
 ## Drone 1.0
 
-| Elemento | Comportamento/valor portado |
+| Element | Ported behavior/value |
 |---|---|
-| Custo | 1 foguete |
-| Fila | Até quatro drones; um novo lançamento encaminha o mais antigo à explosão |
-| Vida | 20 pontos |
-| Velocidade inicial | 400 unidades/s |
-| Primeiro `think` | 0,6 s após o lançamento |
-| Atualizações seguintes | 0,2 s |
-| Duração | Lógica original de aproximadamente 6 s, com margem de expiração e resolução do `think` |
-| Busca | Direção de voo, visibilidade de posições do alvo, distância e compatibilidade de submersão |
-| Movimento | Atualização da posição/velocidade estimada do alvo, ajuste de velocidade e desvios quando a direção fica invertida |
-| Colisão | Ricochetes, desgaste por contatos e recuperação de drone parado/no chão |
-| Dano radial | Raio 70, base `40 + r × 5`, redução por distância |
-| Ignição | `r > 0,95` e dano > 20 |
-| Modelo | `progs/lavaball.mdl` |
-| Explosão | `progs/s_explod.spr`, quadros 0–5 |
+| Cost | 1 rocket |
+| Queue | Up to four drones; a new launch schedules the oldest one to explode |
+| Health | 20 points |
+| Initial speed | 400 units/s |
+| First `think` | 0.6 s after launch |
+| Subsequent updates | 0.2 s |
+| Lifetime | Original logic of approximately 6 s, subject to the expiry margin and `think` timing resolution |
+| Search | Flight direction, visibility of target positions, distance, and compatible submersion levels |
+| Movement | Updates to estimated target position/velocity, speed adjustment, and deviations when heading in the opposite direction |
+| Collision | Ricochets, damage from contacts, and recovery when stuck or on the ground |
+| Radial damage | Radius 70, base `40 + r × 5`, reduced by distance |
+| Ignition | `r > 0.95` and damage > 20 |
+| Model | `progs/lavaball.mdl` |
+| Explosion | `progs/s_explod.spr`, frames 0–5 |
 
-O Drone mantém dono lógico separado do dono físico usado para colisão. A fila e as referências são removidas na limpeza do jogador. O porte também trata drones que estavam perseguindo o jogador removido, para não retargetar involuntariamente um cliente que reutilize o slot.
+The Drone keeps a logical owner separate from the physical owner used for collisions. Its queue and references are removed during player cleanup. The port also handles drones that were pursuing the removed player, preventing them from unintentionally targeting a client that reuses that slot.
 
-Foram corrigidos dois problemas de referência: a remoção no céu agora desliga o Drone da fila, e a verificação de busca sem alvo compara a sentinela efetivamente usada (−10). O segundo caso corrige uma comparação histórica com −1. Essas diferenças são deliberadas e não devem ser apresentadas como reprodução literal de um erro do QC.
+Two reference-handling issues were fixed: removal on sky contact now unlinks the Drone from its queue, and the no-target search check compares against the sentinel actually used (−10). The latter fixes a historical comparison against −1. These are deliberate differences and should not be described as a literal reproduction of a QC bug.
 
 ## Shrapnel 1.0
 
-| Elemento | Comportamento/valor portado |
+| Element | Ported behavior/value |
 |---|---|
-| Custo | 1 foguete |
-| Míssil principal | Velocidade 850, duração máxima 6 s |
-| Origem do míssil | Origem do jogador + frente × 36 + Z14 |
-| Chama acompanhante | Frente × 18 + Z14, mesma velocidade e duração |
-| Impacto no céu | Remove sem explosão |
-| Explosão primária | Ao tocar BSP, dano-base `30 + r × 10`, raio de busca dano + 40 |
-| Queda primária | Dano − metade da distância ao centro da caixa; metade contra atirador e shambler; exige `CanDamage` |
-| Fragmentos | Três normais; quatro conforme o sorteio da explosão primária |
-| Velocidade de fragmentos | 600 unidades/s |
-| Dano de fragmentos | Raio 70; base `25 + (0,5 − r) × 5` contra `DAMAGE_AIM` |
-| Queda dos fragmentos | Base perto do centro, depois `(70 − distância) / 2` até zero |
-| Outros objetos danificáveis | 10 pontos |
-| Ignição | `r > 0,66` e dano > 6 |
-| Temporização de contato BSP | Dano e som com intervalos independentes estritamente maiores que 0,1 s |
-| Explosão de fragmento | Quadros 0, 3, 4, remoção; 0,1 s por quadro |
+| Cost | 1 rocket |
+| Main missile | Speed 850, maximum lifetime 6 s |
+| Missile origin | Player origin + forward × 36 + Z14 |
+| Accompanying flame | Forward × 18 + Z14, same speed and lifetime |
+| Sky contact | Removal without an explosion |
+| Primary explosion | On BSP contact, base damage `30 + r × 10`, search radius damage + 40 |
+| Primary falloff | Damage − half the distance to the bounding-box center; halved against the shooter and a shambler; requires `CanDamage` |
+| Fragments | Normally three; four depending on the primary explosion's random roll |
+| Fragment speed | 600 units/s |
+| Fragment damage | Radius 70; base `25 + (0.5 − r) × 5` against `DAMAGE_AIM` |
+| Fragment falloff | Base damage near the center, then `(70 − distance) / 2` down to zero |
+| Other damageable objects | 10 points |
+| Ignition | `r > 0.66` and damage > 6 |
+| BSP contact timing | Independent damage and sound intervals, each strictly greater than 0.1 s |
+| Fragment explosion | Frames 0, 3, 4, then removal; 0.1 s per frame |
 
-O impacto não BSP não recebe a explosão primária que só existe no caso BSP original. Os fragmentos conservam ricochete e retomada de voo. A fórmula de fragmentos não ganhou uma verificação de linha de visão inexistente no QC e não aplica automaticamente metade do dano contra o próprio atirador.
+Non-BSP impacts do not receive the primary explosion that exists only for BSP contacts in the original. Fragments retain ricochets and their return to flight. The fragment formula does not add a line-of-sight check absent from the QC and does not automatically halve damage against the shooter.
 
-A autoria do dano usa o dono lógico, mesmo quando o dono físico do fragmento é o mundo. O tempo de conexão do dono é guardado para impedir transferência de crédito após reutilização de slot.
+Damage attribution uses the logical owner, even when the fragment's physical owner is the world. The owner's connection time is saved to prevent credit from transferring when a slot is reused.
 
 ## WeldGun 1.0
 
-| Elemento | Comportamento/valor portado |
+| Element | Ported behavior/value |
 |---|---|
-| Projétil | `weld_blob`, `MOVETYPE_FLYMISSILE`, caixa de tamanho zero |
-| Custo | 1 prego, descontado pelo fluxo de disparo da nailgun |
-| Velocidade | 1400 unidades/s |
-| Duração máxima | 6 s |
-| Origem | Origem do tiro − Z6 + direção × 8 |
-| Luz | No máximo um projétil iluminado a cada 0,2 s por atirador |
-| Modelo | `progs/flame2.mdl`, ângulo X acrescido de 90 graus |
-| Raio | 60 |
-| Dano contra `DAMAGE_AIM` | `db = 11 + (0,5 − r) × 6`, entre 8 e 14 |
-| Distância de dano | Origem do alvo + Z16 até o impacto |
-| Queda | Dano cheio abaixo de `3 × db`, queda linear até zero em 60 |
-| Outros objetos danificáveis | 10 pontos |
-| Ignição | A mesma amostra `r` do dano: estritamente > 0,85, com dano > 5 |
-| Explosão | Recua 4 unidades; quadros 0, 3, 4 em `s_explod.spr`, 0,1 s cada |
+| Projectile | `weld_blob`, `MOVETYPE_FLYMISSILE`, zero-size bounding box |
+| Cost | 1 nail, deducted by the nailgun firing path |
+| Speed | 1400 units/s |
+| Maximum lifetime | 6 s |
+| Origin | Shot origin − Z6 + direction × 8 |
+| Light | At most one illuminated projectile every 0.2 s per shooter |
+| Model | `progs/flame2.mdl`, X angle increased by 90 degrees |
+| Radius | 60 |
+| Damage against `DAMAGE_AIM` | `db = 11 + (0.5 − r) × 6`, between 8 and 14 |
+| Damage distance | From target origin + Z16 to the impact |
+| Falloff | Full damage below `3 × db`, decreasing linearly to zero at 60 |
+| Other damageable objects | 10 points |
+| Ignition | The same `r` sample used for damage: strictly > 0.85, with damage > 5 |
+| Explosion | Moves back 4 units; frames 0, 3, 4 in `s_explod.spr`, 0.1 s each |
 
-Impactos no céu são removidos sem dano. Mantidos sons originais de disparo/voo/impacto. A comparação `0.85f` preserva a precisão float da constante QuakeC: não deve virar uma comparação contra uma constante double que inclua o valor de borda por arredondamento.
+Sky impacts are removed without damage. The original firing, flight, and impact sounds are retained. The `0.85f` comparison preserves the QuakeC constant's float precision: it must not become a comparison against a double constant that includes the boundary value because of rounding.
 
-Não se acrescentou verificação de parede no dano radial, pois a rotina original também não a possuía. O dano final passa pelos modificadores normais do combate KTX.
+No wall check was added to radial damage because the original routine did not have one. Final damage goes through KTX's normal combat modifiers.
 
 ## Burn 1.0
 
-### Ignição e camadas
+### Ignition and stacks
 
-A ignição é bloqueada quando a vítima está submersa acima da cintura, invulnerável, morta, é um Drone ou um barril explosivo. Em CTF, não incendeia outro integrante da mesma equipe; autoignição continua permitida conforme as regras originais.
+Ignition is blocked when the victim is submerged above the waist, invulnerable, dead, a Drone, or an explosive barrel. In CTF, it cannot ignite another member of the same team; self-ignition remains possible under the original rules.
 
-As camadas usam bits 1, 2 e 4, cada uma com duração de 15 segundos. Cada camada contribui com 3 pontos por tick de dano; três camadas somam 9 antes de armadura e outros modificadores. O primeiro `think` ocorre em 0,1 s; dano usa o temporizador de 1 s e a comparação estrita `time > burn_damage_time`. A parte visual atualiza em 0,02 s.
+Stacks use bits 1, 2, and 4, each lasting 15 seconds. Each stack contributes 3 points per damage tick; three stacks total 9 before armor and other modifiers. The first `think` occurs after 0.1 s; damage uses a 1 s timer and the strict comparison `time > burn_damage_time`. Visuals update every 0.02 s.
 
-Uma camada expirada ainda contribui no tick em que seu bit é removido, conforme o QC. Quando as três camadas estão ocupadas, foram preservadas as comparações aninhadas originais de renovação, incluindo o caso em que nenhuma camada é renovada. Não se apresenta essa peculiaridade como escolha nova de balanceamento.
+An expired stack still contributes on the tick that removes its bit, as in the QC. When all three stacks are occupied, the original nested refresh comparisons are preserved, including the case where no stack is refreshed. This quirk is not presented as a new balancing decision.
 
-### Contágio e água
+### Spread and water
 
-Contágio usa centro na origem da vítima + Z18, raio 50, dano `6 + r × 4` e ignição quando `r > 0,5`. O mesmo sorteio é usado para os vizinhos desse tick. O crédito do contágio pertence ao personagem em chamas; o dano direto das camadas continua atribuído ao autor inicial.
+Spread uses a center at victim origin + Z18, radius 50, damage `6 + r × 4`, and ignition when `r > 0.5`. The same random roll is used for nearby entities during that tick. Spread damage is credited to the burning character; direct stack damage remains attributed to the initial attacker.
 
-Água com `waterlevel > 1` apaga no próximo tick de dano, produz som de extinção e oito bolhas em intervalos de 0,1–0,3 s. As bolhas começam com velocidade Z15 e passam à rotina nativa `bubble_bob`.
+Water with `waterlevel > 1` extinguishes the fire on the next damage tick, producing an extinguishing sound and eight bubbles at intervals of 0.1–0.3 s. Bubbles start with velocity Z15 and then use the native `bubble_bob` routine.
 
-### Chamas, dor e morte
+### Flames, pain, and death
 
-São duas chamas em `flame2.mdl`, quadro 1, próximas ao personagem e atrás da direção de visão, com variação oposta de posição. A chama principal produz luz. A altura é reduzida durante a animação de morte.
+Two flames use `flame2.mdl`, frame 1, near the character and behind the viewing direction, with opposite positional jitter. The main flame emits light. Their height is reduced during the death animation.
 
-`PainSound` usa os sons de queimadura com intervalo mínimo de 0,8 s. Uma morte por outra arma remove as chamas; morte por Burn mantém o efeito até `DEAD_DEAD` e termina com uma animação de explosão 0–5.
+`PainSound` uses burning pain sounds with a minimum interval of 0.8 s. Death from another weapon removes the flames; death from Burn retains the effect until `DEAD_DEAD` and ends with an explosion animation using frames 0–5.
 
-O fluxo do jogador utiliza `player_dieb1`, depois gibs. A velocidade dos gibs parte da velocidade atual, acrescentando ±80 em X/Y e 50–100 em Z. `ThrowHead` preserva altura e velocidade particulares da morte por fogo. A marca `burn_gibbed` impede gibs duplicados no fluxo KTX quando já foram produzidos antes de `PlayerDead`.
+The player death sequence uses `player_dieb1`, followed by gibs. Gib velocity starts from the current velocity, adding ±80 on X/Y and 50–100 on Z. `ThrowHead` preserves the height and velocity specific to a fire death. The `burn_gibbed` flag prevents duplicate gibs in the KTX flow when they have already been produced before `PlayerDead`.
 
-As chamas só são limpas na mudança de vida/desconexão ou ao terminar o efeito, não no começo de `PlayerDie`. O descarte da bandeira permanece no fluxo nativo CTF.
+Flames are only cleaned up on a new life/disconnection or when the effect ends, not at the start of `PlayerDie`. Flag dropping remains in the native CTF flow.
 
-## Lightning 1.1 e Hook 1.2
+## Lightning 1.1 and Hook 1.2
 
 ### Lightning
 
-A descarga especial exige `waterlevel > 2`. Sua intensidade-base é `min(400, 20 × células)` e ela consome as células restantes. A distância, armadura e demais regras continuam sendo aplicadas; 400 não deve ser descrito como dano final garantido para todos os alvos.
+The special discharge requires `waterlevel > 2`. Its base intensity is `min(400, 20 × cells)`, and it consumes the remaining cells. Distance, armor, and other rules still apply; 400 must not be described as guaranteed final damage to every target.
 
-Os sons são controlados por temporizadores e deslocamento do ponto atingido. O teste de movimento considera intervalo mínimo de 0,1 s, mudança acima de 10 unidades e sorteio > 0,3; a repetição regular usa a janela de 0,6 s do original.
+Sounds are controlled by timers and movement of the impact point. The movement check uses a minimum interval of 0.1 s, a change greater than 10 units, and a random roll > 0.3; regular repetition uses the original 0.6 s window.
 
 ### Hook
 
-Impulses 98/97 implementam segurar/liberar. O impulse 22 é um atalho adicional para alternar o mesmo sistema. O gancho viaja a 1400 unidades/s, gera oito elos e causa 7 pontos de dano no contato antes dos modificadores. A fixação num personagem dura no máximo 2 s.
+Impulses 98/97 implement hold/release. Impulse 22 is an additional shortcut for toggling the same system. The hook travels at 1400 units/s, creates eight links, and deals 7 points of contact damage before modifiers. Attachment to a character lasts at most 2 s.
 
-Tração e balanço são calculados pelo `think` original em intervalos de 0,1 s, compondo as velocidades paralela e tangencial em relação ao ponto de fixação. O efeito não é substituído pelo gancho nativo KTX. Morte, teleporte e liberação terminam o vínculo.
+Pulling and swinging are calculated by the original `think` at 0.1 s intervals, combining velocity components parallel and tangential to the attachment point. The effect is not replaced with the native KTX hook. Death, teleportation, and release end the connection.
 
-O código de referência tinha comentado o bloco que ativava `HOOK_FLY`; o porte não o reativa como comportamento novo. Modelos e sons opcionais customizados que estavam desativados na referência continuam desativados. Permanecem os recursos padrão `v_spike.mdl`, `s_spike.mdl` e sons correspondentes.
+The reference code had commented out the block that activated `HOOK_FLY`; the port does not re-enable it as new behavior. Optional custom models and sounds that were disabled in the reference remain disabled. The standard `v_spike.mdl`, `s_spike.mdl`, and corresponding sounds are retained.
 
-## Adaptações de API e correções de segurança de referência
+## API adaptations and reference-safety fixes
 
-1. **Estado QC para C:** campos particulares vivem em `gedict_t.cfn`; `owner`/`enemy` nativos usam `EDICT_TO_PROG` e `PROG_TO_EDICT`. Funções de estado QuakeC `[frame, next]` viraram callbacks com `nextthink` explícito.
-2. **Busca por raio:** a cadeia retornada pelo builtin NetQuake foi substituída pela iteração incremental de `trap_findradius` do KTX. Centros, raios e filtros específicos foram mantidos.
-3. **Dano comum:** `CFN_Damage` classifica a arma e encaminha a `T_Damage`; não contorna armadura, Quad e proteção de equipe dos jogadores. O golpe letal registra `cfn.killweapon` antes de `Killed`.
-4. **Slots reutilizados:** Weld, Shrapnel e Burn registram a conexão do atacante. Se outra pessoa ocupa o mesmo slot, o dano pendente passa a ser atribuído ao mundo. Respawn legítimo mantém o crédito, pois não muda a conexão.
-5. **Limpeza de efeito:** referências de chamas são anuladas ao terminar. A segunda chama e o emissor de vapor têm identificação própria. Vapor não acompanha um cliente novo que reutilize o slot da vítima.
-6. **Gancho:** vínculo e geração evitam um gancho antigo modificar o estado de uma vida posterior. Corrente e callbacks são removidos junto com o gancho.
-7. **Drone:** limpeza de fila no céu e correção da sentinela sem alvo impedem uso de referências incorretas.
-8. **Morte:** identificação da arma somente no golpe letal e proteção contra duplicação de gibs preservam o estado da morte mesmo diante de chamadas adicionais sem dano efetivo.
+1. **QC state to C:** private fields live in `gedict_t.cfn`; native `owner`/`enemy` fields use `EDICT_TO_PROG` and `PROG_TO_EDICT`. QuakeC state functions `[frame, next]` became callbacks with an explicit `nextthink`.
+2. **Radius searches:** the linked chain returned by the NetQuake builtin was replaced with incremental iteration through KTX's `trap_findradius`. The specific centers, radii, and filters were retained.
+3. **Shared damage path:** `CFN_Damage` classifies the weapon and forwards to `T_Damage`; it does not bypass player armor, Quad, or team protection. The lethal hit records `cfn.killweapon` before `Killed`.
+4. **Reused slots:** Weld, Shrapnel, and Burn record the attacker's connection identity. If someone else occupies the same slot, pending damage is attributed to the world. A normal respawn keeps the credit because the connection has not changed.
+5. **Effect cleanup:** flame references are cleared when the effect ends. The second flame and the steam emitter have their own identifiers. Steam does not follow a new client that reuses the victim's slot.
+6. **Hook:** the link and generation prevent an old hook from modifying the state of a later life. The chain and callbacks are removed along with the hook.
+7. **Drone:** queue cleanup on sky contact and the no-target sentinel fix prevent incorrect references from being used.
+8. **Death:** recording the weapon only on the lethal hit and guarding against duplicate gibs preserve death state even when additional calls deal no effective damage.
 
-Esses ajustes devem ser distinguidos das fórmulas históricas mantidas. Uma intenção de fidelidade não exige preservar referências inválidas ou atribuir dano ao ocupante errado de um slot.
+These changes must be distinguished from the historical formulas that were retained. Fidelity does not require keeping invalid references or crediting damage to the wrong occupant of a slot.
 
-## Configuração e carregamento CTF
+## CTF configuration and loading
 
-O exemplo usa CTF contínuo com `k_matchless 1`. Quando `k_ctfnormal` está ativo, a seleção automática do modo escolhe o preset CTF. A publicação de `mode=ctf` considera também o estado nativo `isCTF()` para evitar um rótulo de preset anterior no primeiro carregamento.
+The example uses continuous CTF with `k_matchless 1`. When `k_ctfnormal` is active, automatic mode selection chooses the CTF preset. Publishing `mode=ctf` also considers the native `isCTF()` state to avoid displaying a previous preset's label on the first load.
 
-A inicialização comum de presets limpa `sv_loadentfiles_dir`. As regras do modo restauram `sv_loadentfiles 1` e `sv_loadentfiles_dir ctf` diretamente nos arquivos apropriados. Apenas definir essas opções antes de um preset não era suficiente para garantir o carregamento das entidades.
+Common preset initialization clears `sv_loadentfiles_dir`. The mode rules restore `sv_loadentfiles 1` and `sv_loadentfiles_dir ctf` directly in the appropriate files. Setting these options only before a preset was not enough to ensure entity loading.
 
-A configuração de referência fornece limite 150, tempo 40, velocidade 350 e aceleração 20. São opções do exemplo e não requisitos do código. `teamplay 4` representa proteção de vida/armadura de aliados com dano próprio; a antiga máscara ServerModules não é reutilizada como número de teamplay KTX.
+The reference configuration provides a score limit of 150, time limit of 40, speed of 350, and acceleration of 20. These are example settings, not code requirements. `teamplay 4` protects teammates' health/armor while retaining self-damage; the old ServerModules bitmask is not reused as a KTX teamplay number.
 
-Bots e runas ficam desativados, assim como o gancho nativo KTX. A compilação pode conter estruturas do suporte nativo de bots necessárias à base KTX; isso não cria bots nem popula o servidor. Os clientes sintéticos da fixture são exclusivos de teste.
+Bots and runes are disabled, as is the native KTX hook. The build may contain native bot-support structures required by the KTX base; this does not create bots or populate the server. The fixture's synthetic clients are for testing only.
 
-Os dados de mapa são externos. A preparação de uma instalação usa arquivos fornecidos localmente e não altera o original. Correções de consistência de entidades devem ser verificadas contra o BSP correspondente: um nome de submodelo não identifica a mesma geometria em mapas diferentes.
+Map data is external. Preparing an installation uses locally supplied files and does not modify the originals. Entity consistency fixes must be checked against the corresponding BSP: a submodel name does not identify the same geometry across different maps.
 
-O importador aplica dois ajustes nas cópias locais de entidades: em `e4m4`, o destino de teleporte `t204` usa origem `1065 758 273` e ângulos `30 102 0`, para que o acréscimo nativo de Z27 durante o spawn resulte em `1065 758 300`; em `e4m2`, remove chaves comuns ativas no deathmatch, sem remover as entidades de bandeira. Isso reproduz ajustes que o código CTFNormal fazia após o carregamento. O importador não distribui esses arquivos nem converte esses dados em conteúdo do repositório.
+The importer applies two adjustments to the local entity copies: in `e4m4`, teleport destination `t204` uses origin `1065 758 273` and angles `30 102 0`, so the native Z27 addition during spawn produces `1065 758 300`; in `e4m2`, it removes ordinary keys active in deathmatch without removing flag entities. This reproduces adjustments that the CTFNormal code made after loading. The importer does not distribute these files or turn that data into repository content.
 
-## Validação registrada
+## Recorded validation
 
-Os números abaixo descrevem o estado CFN1. As três suites unitárias foram executadas novamente na árvore pública: **3674 verificações passaram** em Windows x64 com Zig 0.13.0. A compilação nativa e o carregamento da DLL, com exports `vmMain` e `dllEntry`, também passaram. As 27 verificações na engine e a varredura de 20 mapas são registros anteriores do mesmo estado, não parte do comando unitário. As suites devem ser executadas novamente ao mudar código, compilador ou integrações relevantes.
+The numbers below describe the CFN1 state. All three unit suites were rerun in the public tree: **3674 checks passed** on Windows x64 with Zig 0.13.0. The native build and DLL loading, including the `vmMain` and `dllEntry` exports, also passed. The 27 engine checks and the 20-map sweep are earlier records of the same state, not part of the unit-test command. The suites should be rerun when code, the compiler, or relevant integrations change.
 
-| Conjunto | Total | Escopo |
+| Suite | Total | Scope |
 |---|---:|---|
-| WeldGun/Burn | 3324 | Módulos C reais; mock da fronteira KTX/engine |
-| Shrapnel | 252 | Módulo C real; entradas e respostas determinísticas |
-| Drone/Hook | 98 | Módulos C reais; fila, alvos, movimento e estados |
-| Total unitário | **3674** | Não substitui física/renderização da engine |
-| Integração MVDSV/KTX | **27** | Fixture carregada na engine, zero falhas |
-| Rotação | **20 mapas** | Carregamento, status, modo CTF e duas bandeiras |
+| WeldGun/Burn | 3324 | Actual C modules; mocked KTX/engine boundary |
+| Shrapnel | 252 | Actual C module; deterministic inputs and responses |
+| Drone/Hook | 98 | Actual C modules; queue, targets, movement, and states |
+| Unit total | **3674** | Does not replace engine physics/rendering tests |
+| MVDSV/KTX integration | **27** | Fixture loaded in the engine, zero failures |
+| Rotation | **20 maps** | Loading, status, CTF mode, and both flags |
 
-### O que os testes unitários exercitam
+### What the unit tests exercise
 
-- **Weld/Burn:** 280 combinações de aleatoriedade/distância de impacto, fórmula radial, limiares estritos, voo, luz, vida, quadros, bloqueios de ignição, camadas/renovação/expiração, autoria do contágio, água/bolhas, morte, limpeza idempotente, sons e identidade de conexão.
-- **Shrapnel:** lançamento/custo, modelo/propriedade, céu, BSP e não BSP, dispersão e número de fragmentos, fórmulas de dano, ignição, exceção shambler, obstáculos da explosão primária, sangue, limites de frequência, ricochete, retomada do voo, expiração, animações e reutilização do slot do dono.
-- **Drone/Hook:** caminhos portados com respostas determinísticas da engine, incluindo limite da fila, seleção/atualização do alvo, estados de contato, gancho/corrente e remoção.
+- **Weld/Burn:** 280 combinations of random value/impact distance, radial formula, strict thresholds, flight, lighting, lifetime, frames, ignition blockers, stacking/refresh/expiry, spread attribution, water/bubbles, death, idempotent cleanup, sounds, and connection identity.
+- **Shrapnel:** launch/cost, model/ownership, sky, BSP and non-BSP, dispersion and fragment count, damage formulas, ignition, the shambler exception, obstacles for the primary explosion, blood, rate limits, ricochets, return to flight, expiry, animations, and owner-slot reuse.
+- **Drone/Hook:** ported paths with deterministic engine responses, including the queue limit, target selection/updates, contact states, hook/chain behavior, and removal.
 
-### O que a fixture na engine exercita
+### What the engine fixture exercises
 
-1. CTF nativo ativo e as duas bandeiras presentes.
-2. Seleção Weld ao entrar na nailgun e retorno para pregos comuns.
-3. Criação do projétil, munição e velocidade Weld.
-4. Alternância da GL para Drone, custo e limite de quatro drones.
-5. Limpeza da fila de drones.
-6. Alternância da RL para Shrapnel, custo e velocidade.
-7. Ignição, perda real de vida por `T_Damage` e extinção na água.
-8. Morte por Burn, gibs, reset no respawn e morte convencional posterior.
-9. Proteção de aliados contra dano/ignição e preservação de dano próprio.
-10. Consumo das células e limite da descarga submersa da Lightning.
-11. Lançamento/liberação do gancho por impulses 98/97.
+1. Native CTF active and both flags present.
+2. Weld selection when entering the nailgun and switching back to ordinary nails.
+3. Weld projectile creation, ammunition, and speed.
+4. Switching the GL to Drone, its cost, and the four-drone limit.
+5. Drone queue cleanup.
+6. Switching the RL to Shrapnel, its cost, and speed.
+7. Ignition, actual health loss through `T_Damage`, and extinguishing in water.
+8. Burn death, gibs, reset on respawn, and a subsequent conventional death.
+9. Teammate protection against damage/ignition and preservation of self-damage.
+10. Cell consumption and the submerged Lightning discharge cap.
+11. Hook launch/release through impulses 98/97.
 
-Esses grupos contêm 27 verificações individuais. A fixture é compilada com `CFN_TEST`; sua entrada não deve ser incluída na compilação normal.
+These groups contain 27 individual checks. The fixture is compiled with `CFN_TEST`; its entry point must not be included in the normal build.
 
-### Varredura de mapas
+### Map sweep
 
-Foram carregados `e1m1`, `e1m2`, `e1m3`, `e1m4`, `e1m5`, `e1m6`, `e2m1`, `e2m2`, `e2m3`, `e2m5`, `e3m1`, `e4m3`, `e4m4`, `e4m5`, `e4m6`, `dm1`, `dm3`, `dm4`, `dm5` e `dm6`.
+The following maps were loaded: `e1m1`, `e1m2`, `e1m3`, `e1m4`, `e1m5`, `e1m6`, `e2m1`, `e2m2`, `e2m3`, `e2m5`, `e3m1`, `e4m3`, `e4m4`, `e4m5`, `e4m6`, `dm1`, `dm3`, `dm4`, `dm5`, and `dm6`.
 
-O ensaio confirmou resposta de status com o mapa correto, CTF ativo e ambas as bandeiras. Não percorreu visualmente cada rota e não realizou uma partida completa em cada mapa. Os BSP/ENT usados nesse ensaio não são distribuídos no repositório.
+The test confirmed a status response with the correct map, active CTF, and both flags. It did not visually traverse every route or run a complete match on each map. The BSP/ENT files used in that test are not distributed in the repository.
 
-### Limites da validação
+### Validation limits
 
-Ainda não estão demonstrados:
+The following have not yet been demonstrated:
 
-- uma partida humana completa com verificação visual e de controle de todas as armas;
-- igualdade de colisões, ricochetes, mira e sensação de movimento com o NetQuake original;
-- captura/retorno de bandeira em todas as combinações de efeitos, gancho e mortes;
-- matriz completa de mudanças de equipe, inventário/HUD, latência e vários clientes;
-- carga prolongada de partidas e equivalência em outros sistemas operacionais/arquiteturas.
+- a complete human match with visual and control checks for every weapon;
+- identical collisions, ricochets, aiming, and movement feel compared with the original NetQuake mod;
+- flag capture/return under every combination of effects, hook use, and deaths;
+- a complete matrix of team changes, inventory/HUD behavior, latency, and multiple clients;
+- sustained match load and equivalence across other operating systems/architectures.
 
-O projeto registra o que foi efetivamente testado. Contagem de assertions, compilação bem-sucedida e carregamento de mapas não são usados como substitutos de um playtest humano.
+The project records what was actually tested. Assertion counts, successful builds, and map loading are not used as substitutes for a human playtest.
 
-## Regressões e revisão futura
+## Regressions and future review
 
-Pull requests deste repositório exigem revisão e aprovação final de [@fernandosalvatori](https://github.com/fernandosalvatori). Outras revisões ajudam a avaliar as alterações, mas não substituem a aprovação exclusiva do mantenedor para incorporá-las. O formato esperado de contribuição está em [CONTRIBUTING.md](../CONTRIBUTING.md).
+Pull requests to this repository require review and final approval from [@fernandosalvatori](https://github.com/fernandosalvatori). Other reviews help assess changes but do not replace the maintainer's exclusive approval to merge them. The expected contribution format is described in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-Mudanças neste porte devem preservar as suites existentes e acrescentar casos dirigidos quando alterarem dano, seleção, ciclo de vida ou propriedade de entidades. Os pontos de maior risco são estados que sobrevivem ao respawn/desconexão, callbacks de dano que disparam morte, fila/corrente de entidades e carregamento de regras na troca de mapa.
+Changes to this port should preserve the existing suites and add focused cases when modifying damage, selection, lifecycle, or entity ownership. The highest-risk areas are state that survives respawn/disconnection, damage callbacks that trigger death, entity queues/chains, and rule loading during map changes.
 
-Uma proposta de integração upstream deve separar código de arma das preferências de configuração, manter autoria/licença dos ServerModules, apresentar a diferença contra a base KTX e incluir resultados de jogo humano quando disponíveis. Dados comerciais do jogo, recursos externos e configurações privadas não pertencem ao patch de código.
+An upstream integration proposal should separate weapon code from configuration preferences, preserve ServerModules authorship/license notices, provide the diff against the KTX base, and include human gameplay results when available. Commercial game data, external resources, and private configurations do not belong in the code patch.
 
-A árvore pública documentada aqui não indica que um PR foi aceito ou que os mantenedores originais aprovaram esta adaptação.
+The public tree documented here does not imply that a PR has been accepted or that the original maintainers have approved this adaptation.

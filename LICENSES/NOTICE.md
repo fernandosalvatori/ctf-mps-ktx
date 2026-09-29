@@ -1,57 +1,59 @@
-# Origem, autoria e licenças
+**Language:** English | [Português (Brasil)](NOTICE.pt-BR.md)
 
-Este documento identifica as principais origens do código de **CTF MPS KTX**. Ele complementa os cabeçalhos existentes; não substitui nem remove seus termos.
+# Origins, authorship, and licenses
 
-## Criação e manutenção do porte
+This document identifies the main sources of the **CTF MPS KTX** code. It supplements the existing file headers; it does not replace or remove their terms.
 
-**Fernando (Droni) Salvatori**, [@fernandosalvatori](https://github.com/fernandosalvatori), é o criador e mantenedor do **porte CTF MPS KTX**, publicado inicialmente em **28/09/2026**.
+## Creation and maintenance of the port
 
-Essa atribuição se refere ao projeto de adaptação e à sua manutenção. Não transfere nem substitui a autoria de KTX, MVDSV, ServerModules, QWProgs, id Software ou contribuições anteriores. Os avisos preexistentes permanecem nos arquivos correspondentes.
+**Fernando (Droni) Salvatori**, [@fernandosalvatori](https://github.com/fernandosalvatori), is the creator and maintainer of the **CTF MPS KTX port**, first published on **28 September 2026**.
 
-A revisão e aprovação final necessárias para incorporar pull requests neste repositório cabem exclusivamente a [@fernandosalvatori](https://github.com/fernandosalvatori), conforme [CONTRIBUTING.md](../CONTRIBUTING.md). Essa política de manutenção não altera as licenças dos componentes.
+This attribution refers to the adaptation project and its maintenance. It does not transfer or replace the authorship of KTX, MVDSV, ServerModules, QWProgs, id Software, or earlier contributions. The existing notices remain in their respective files.
 
-## KTX e código anterior
+The review and final approval required to merge pull requests into this repository are reserved exclusively for [@fernandosalvatori](https://github.com/fernandosalvatori), as described in [CONTRIBUTING.md](../CONTRIBUTING.md). This maintenance policy does not change the components' licenses.
 
-A árvore `source/ktx` deriva de **KTX 1.47**, projeto [QW-Group/ktx](https://github.com/QW-Group/ktx). O texto da GNU General Public License versão 2 está em [../LICENSE.md](../LICENSE.md), copiado da distribuição KTX.
+## KTX and earlier code
 
-Os arquivos KTX preservam avisos de seus autores e contribuições anteriores. Entre eles há cabeçalhos QWProgs-DM com copyright de `[sd] angel` e referências a código QuakeWorld/Quake de **id Software, Inc.**, além de outras atribuições por arquivo. Esses avisos não foram substituídos por uma atribuição única ao porte.
+The `source/ktx` tree is derived from **KTX 1.47**, the [QW-Group/ktx](https://github.com/QW-Group/ktx) project. The text of the GNU General Public License version 2 is in [../LICENSE.md](../LICENSE.md), copied from the KTX distribution.
 
-Consulte também a documentação e os avisos individuais da árvore upstream preservada. Alguns componentes auxiliares podem conter condições ou atribuições próprias; o resumo deste documento não redefine a licença desses componentes.
+The KTX files preserve notices from their authors and earlier contributions. These include QWProgs-DM headers with copyright attributed to `[sd] angel` and references to QuakeWorld/Quake code from **id Software, Inc.**, along with other attributions in individual files. These notices have not been replaced with a single attribution to this port.
+
+Also consult the documentation and individual notices in the preserved upstream tree. Some auxiliary components may have their own terms or attributions; this document's summary does not redefine their licenses.
 
 ## ServerModules
 
-As regras especiais foram portadas de módulos QuakeC do **CTFNormal / ServerModules**, de **Johannes Plass**, copyright **1996, 1997**, cujos cabeçalhos permitem redistribuição e modificação sob a **GNU GPL versão 2 ou, a critério do destinatário, qualquer versão posterior** (`GPL-2.0-or-later`).
+The special rules were ported from **CTFNormal / ServerModules** QuakeC modules by **Johannes Plass**, copyright **1996, 1997**. Their headers permit redistribution and modification under the **GNU GPL version 2 or, at the recipient's option, any later version** (`GPL-2.0-or-later`).
 
-| Origem QuakeC | Porte em C |
+| QuakeC source | C port |
 |---|---|
 | `_drone.qc`, `_drone.qh` — Drone 1.0 | `source/ktx/src/ctfnormal_drone.c` |
 | `_shrap.qc`, `_shrap.qh` — Shrapnel 1.0 | `source/ktx/src/ctfnormal_shrapnel.c` |
 | `_weldgun.qc` — WeldGun 1.0 | `source/ktx/src/ctfnormal_weld.c` |
 | `_burn.qc` — Burn 1.0 | `source/ktx/src/ctfnormal_burn.c` |
 | `_hook.qc`, `_hook.qh` — Hook 1.2 | `source/ktx/src/ctfnormal_hook.c` |
-| `_lightng.qc`, `_lightng.qh` — Lightning 1.1 | Integração em `ctfnormal.c` e `weapons.c` |
-| Integrações de `weapons.qc`, `combat.qc`, `player.qc` | Seleção, dano, contatos, dor e morte nos arquivos KTX correspondentes |
+| `_lightng.qc`, `_lightng.qh` — Lightning 1.1 | Integration in `ctfnormal.c` and `weapons.c` |
+| Integrations from `weapons.qc`, `combat.qc`, and `player.qc` | Selection, damage, touch handling, pain, and death in the corresponding KTX files |
 
-Os novos arquivos de módulos preservam a autoria e a indicação GPL. A conversão para C nativo, as interfaces KTX, a limpeza de referências, os testes e a documentação são alterações deste porte e não devem ser atribuídos como comportamento originalmente escrito pelos autores upstream.
+The new module files preserve the authorship and GPL notices. The conversion to native C, KTX interfaces, reference cleanup, tests, and documentation are changes made by this port and must not be attributed as behavior originally written by the upstream authors.
 
-## Engine e ferramentas
+## Engine and tools
 
-**MVDSV 1.11** é uma dependência externa, obtida separadamente de [QW-Group/mvdsv](https://github.com/QW-Group/mvdsv). Seu executável não é distribuído neste repositório. A licença e os avisos da distribuição MVDSV continuam aplicáveis à engine.
+**MVDSV 1.11** is an external dependency, obtained separately from [QW-Group/mvdsv](https://github.com/QW-Group/mvdsv). Its executable is not distributed in this repository. The MVDSV distribution's license and notices continue to apply to the engine.
 
-Python e Zig são ferramentas externas de compilação/teste; não fazem parte da distribuição de código deste projeto e conservam suas próprias licenças.
+Python and Zig are external build and test tools; they are not part of this project's code distribution and retain their own licenses.
 
-## Dados externos não distribuídos
+## External data not distributed
 
-O repositório não inclui:
+This repository does not include:
 
-- PAKs de Quake;
-- mapas BSP e arquivos de entidades das instalações locais;
-- modelos e sons do jogo ou pacotes de recursos de terceiros;
-- executáveis da engine;
-- configurações privadas, credenciais ou cópias de instalações pessoais.
+- Quake PAK files;
+- BSP maps or entity files from local installations;
+- game models and sounds, or third-party resource packages;
+- engine executables;
+- private configurations, credentials, or copies of personal installations.
 
-O script de preparação usa arquivos locais fornecidos pelo operador. A presença de um importador não concede permissão adicional para usar ou redistribuir esses arquivos. A GPL do código do mod não converte automaticamente os dados comerciais do jogo em conteúdo GPL.
+The preparation script uses local files supplied by the operator. Providing an importer does not grant additional permission to use or redistribute those files. The GPL covering the mod's code does not automatically make the game's commercial data GPL content.
 
-## Relação com os projetos originais
+## Relationship to the original projects
 
-**CTF MPS KTX** identifica esta adaptação independente. Não implica endosso de KTX, MVDSV, id Software ou dos autores de ServerModules. Os nomes dos projetos são usados para identificar a origem e a compatibilidade pretendida.
+**CTF MPS KTX** identifies this independent adaptation. It does not imply endorsement by KTX, MVDSV, id Software, or the ServerModules authors. Project names are used to identify the code's origins and intended compatibility.
