@@ -1,0 +1,50 @@
+name: Windows build and module tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download and verify Zig 0.13.0
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'zig.zip'
+          Invoke-WebRequest 'https://ziglang.org/download/0.13.0/zig-windows-x86_64-0.13.0.zip' -OutFile $archive
+          $expected = 'd859994725ef9402381e557c60bb57497215682e355204d754ee3df75ee3c158'
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) {
+            throw 'Zig archive SHA-256 mismatch'
+          }
+          Expand-Archive -LiteralPath $archive -DestinationPath $env:RUNNER_TEMP
+          Join-Path $env:RUNNER_TEMP 'zig-windows-x86_64-0.13.0' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Build native module
+        run: python scripts/build.py --zig zig
+      - name: Run three module suites
+        run: python scripts/test.py --zig zig
+      - name: Save module and verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctf-mps-ktx-windows-x64
+          if-no-files-found: warn
+          path: |
+            build/qwprogs.dll
+            build/SHA256SUMS.txt
+            build/build-command.json
+            build/build-result.json
+            build/build.log
+            build/tests/*-command.json
+            build/tests/*-build.log
+            build/tests/*-test.log
+            build/tests/results.json
