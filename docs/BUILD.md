@@ -1,50 +1,52 @@
-# Compilar e testar CTF-MPS-KTX
+English | [Português (Brasil)](BUILD.pt-BR.md)
 
-O fluxo validado gera `build/qwprogs.dll`, um módulo nativo Windows x64 para MVDSV. Requer Python 3.9 ou posterior e **Zig 0.13.0**. Não requer pacotes Python adicionais, CMake, Visual Studio, arquivos comerciais do Quake ou um servidor em execução.
+# Build and test CTF-MPS-KTX
 
-Obtenha o compilador pelo [download oficial do Zig 0.13.0](https://ziglang.org/download/0.13.0/zig-windows-x86_64-0.13.0.zip). O SHA-256 do ZIP Windows x64 é `d859994725ef9402381e557c60bb57497215682e355204d754ee3df75ee3c158`, conforme o [índice oficial](https://ziglang.org/download/index.json). Extraia o ZIP e coloque a pasta que contém `zig.exe` no `PATH`.
+The validated workflow produces `build/qwprogs.dll`, a native Windows x64 module for MVDSV. It requires Python 3.9 or later and **Zig 0.13.0**. No additional Python packages, CMake, Visual Studio, commercial Quake files, or running server are required.
 
-Na raiz do repositório, execute:
+Get the compiler from the [official Zig 0.13.0 download](https://ziglang.org/download/0.13.0/zig-windows-x86_64-0.13.0.zip). The Windows x64 ZIP has SHA-256 `d859994725ef9402381e557c60bb57497215682e355204d754ee3df75ee3c158`, as listed in the [official index](https://ziglang.org/download/index.json). Extract the ZIP and add the directory containing `zig.exe` to your `PATH`.
+
+From the repository root, run:
 
 ```powershell
 python scripts/build.py --zig zig
 python scripts/test.py --zig zig
 ```
 
-Se o compilador estiver fora do `PATH`, passe seu executável em `--zig`, entre aspas se o caminho tiver espaços, ou defina a variável de ambiente `ZIG_EXE`. Os scripts verificam a versão antes de compilar. Resolvem os fontes a partir de sua própria localização, portanto o nome da pasta do checkout não é fixo. `--out-dir` permite escolher outro diretório de saída; caminhos relativos nessa opção são resolvidos a partir da pasta do terminal.
+If the compiler is outside your `PATH`, pass its executable path to `--zig`, quoting it if it contains spaces, or set the `ZIG_EXE` environment variable. The scripts check the compiler version before building. They locate the source files relative to their own location, so the checkout directory can have any name. Use `--out-dir` to choose another output directory; relative paths for this option are resolved from the terminal's working directory.
 
-## Compilação
+## Build
 
-`scripts/build.py` lê os arquivos C listados em `source/ktx/CMakeLists.txt` e exclui `bg_lib.c`, que pertence à versão QVM. O alvo é `x86_64-windows-gnu`, com CPU `baseline`, otimização `-O2`, símbolos `-g` e dialeto `gnu17`.
+`scripts/build.py` reads the C files listed in `source/ktx/CMakeLists.txt` and excludes `bg_lib.c`, which belongs to the QVM build. The target is `x86_64-windows-gnu`, with the `baseline` CPU, `-O2` optimization, `-g` debug symbols, and the `gnu17` dialect.
 
-`BOT_SUPPORT=1` acompanha a compilação KTX 1.47 porque essa versão mantém referências internas aos símbolos Frogbot. Isso não habilita bots na configuração do servidor nem inclui o antigo experimento de bots CTF. O módulo de teste em `tests/runtime.c` e a macro `CFN_TEST` não são incluídos nessa DLL.
+The KTX 1.47 build uses `BOT_SUPPORT=1` because that version retains internal references to Frogbot symbols. This does not enable bots in the server configuration or include the earlier CTF bot experiment. The test module in `tests/runtime.c` and the `CFN_TEST` macro are not included in this DLL.
 
-Saídas:
+Outputs:
 
-- `build/qwprogs.dll`: módulo compilado.
-- `build/SHA256SUMS.txt`: hash SHA-256 da DLL produzida.
-- `build/build-result.json`: versão do compilador, alvo, resultado, hash da DLL e hashes dos fontes e cabeçalhos.
-- `build/build-command.json` e `build/build.log`: comando e diagnósticos da compilação.
-- `build/zig-cache` e `build/zig-local`: caches locais do compilador.
+- `build/qwprogs.dll`: the compiled module.
+- `build/SHA256SUMS.txt`: the SHA-256 hash of the resulting DLL.
+- `build/build-result.json`: compiler version, target, result, DLL hash, and hashes of source files and headers.
+- `build/build-command.json` and `build/build.log`: the build command and compiler diagnostics.
+- `build/zig-cache` and `build/zig-local`: local compiler caches.
 
-Os hashes identificam cada compilação; símbolos de depuração, caminho do checkout e metadados do linker podem mudar o hash entre máquinas. Não se afirma reprodução byte a byte.
+The hashes identify each build; debug symbols, the checkout path, and linker metadata can change the hash between machines. Byte-for-byte reproducibility is not claimed.
 
-## Testes
+## Tests
 
-`scripts/test.py` compila e executa três suites em Windows x64:
+`scripts/test.py` compiles and runs three suites on Windows x64:
 
-| Suite | Código exercitado |
+| Suite | Code exercised |
 | --- | --- |
-| Shrapnel | `ctfnormal_shrapnel.c`: tiro, impacto, fragmentos, dano, duração e dono |
-| Weld/Burn | `ctfnormal_weld.c` e `ctfnormal_burn.c`: projétil, dano, ignição, camadas e limpeza |
-| Drone/Hook | `ctfnormal_drone.c` e `ctfnormal_hook.c`: alvo, orientação, colisões e gancho |
+| Shrapnel | `ctfnormal_shrapnel.c`: firing, impact, fragments, damage, lifetime, and ownership |
+| Weld/Burn | `ctfnormal_weld.c` and `ctfnormal_burn.c`: projectile, damage, ignition, layers, and cleanup |
+| Drone/Hook | `ctfnormal_drone.c` and `ctfnormal_hook.c`: targeting, guidance, collisions, and grappling hook |
 
-As suites compilam as implementações reais e substituem somente a fronteira KTX/engine por funções determinísticas. A suite Drone/Hook gera uma unidade de compilação em `build/tests/` para incluir o cabeçalho upstream, que não tem proteção contra inclusão repetida, apenas uma vez. Ela utiliza o conteúdo atual dos dois módulos, sem manter uma cópia alternativa da lógica.
+The suites compile the actual implementations, replacing only the KTX/engine boundary with deterministic functions. The Drone/Hook suite generates a translation unit in `build/tests/` so that the upstream header, which has no include guard, is included only once. It uses the current contents of both modules without maintaining a separate copy of their logic.
 
-Os executáveis, comandos, logs e o resumo `results.json` ficam em `build/tests/`. Falha de compilação ou de qualquer verificação resulta em código de saída diferente de zero. Nenhum script inicia MVDSV, conecta jogadores, instala arquivos em servidores ou altera sua configuração.
+Executables, commands, logs, and the `results.json` summary are written to `build/tests/`. A compilation failure or failed check returns a nonzero exit code. Neither script starts MVDSV, connects players, installs files on a server, or changes server configuration.
 
-Esses testes não substituem uma partida real: não verificam renderização, previsão do cliente, rede, colisões da engine ou equilíbrio entre jogadores. `tests/runtime.c` contém verificações para uma compilação de instrumentação separada, mas não faz parte deste comando nem da DLL distribuída.
+These tests do not replace a real match: they do not verify rendering, client prediction, networking, engine collisions, or gameplay balance. `tests/runtime.c` contains checks for a separate instrumented build, but is not part of this command or the distributed DLL.
 
-## Integração contínua
+## Continuous integration
 
-`.github/workflows/windows.yml` executa os mesmos dois comandos em Windows, depois de baixar e verificar o ZIP oficial do Zig. O workflow publica a DLL e os logs como artefatos da execução. Não publica releases nem implanta um servidor. O histórico do GitHub Actions mostra se uma execução remota efetivamente passou; a presença do arquivo de workflow não comprova uma execução.
+`.github/workflows/windows.yml` runs the same two commands on Windows after downloading and verifying the official Zig ZIP. The workflow uploads the DLL and logs as run artifacts. It does not publish releases or deploy a server. The GitHub Actions history shows whether a remote run actually passed; the presence of a workflow file alone does not establish that it has run.
