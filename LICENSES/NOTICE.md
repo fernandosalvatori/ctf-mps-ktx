@@ -2,6 +2,14 @@
 
 Este documento identifica as principais origens do código de **CTF MPS KTX**. Ele complementa os cabeçalhos existentes; não substitui nem remove seus termos.
 
+## Criação e manutenção do porte
+
+**Fernando (Droni) Salvatori**, [@fernandosalvatori](https://github.com/fernandosalvatori), é o criador e mantenedor do **porte CTF MPS KTX**, publicado inicialmente em **28/09/2026**.
+
+Essa atribuição se refere ao projeto de adaptação e à sua manutenção. Não transfere nem substitui a autoria de KTX, MVDSV, ServerModules, QWProgs, id Software ou contribuições anteriores. Os avisos preexistentes permanecem nos arquivos correspondentes.
+
+A revisão e aprovação final necessárias para incorporar pull requests neste repositório cabem exclusivamente a [@fernandosalvatori](https://github.com/fernandosalvatori), conforme [CONTRIBUTING.md](../CONTRIBUTING.md). Essa política de manutenção não altera as licenças dos componentes.
+
 ## KTX e código anterior
 
 A árvore `source/ktx` deriva de **KTX 1.47**, projeto [QW-Group/ktx](https://github.com/QW-Group/ktx). O texto da GNU General Public License versão 2 está em [../LICENSE.md](../LICENSE.md), copiado da distribuição KTX.
