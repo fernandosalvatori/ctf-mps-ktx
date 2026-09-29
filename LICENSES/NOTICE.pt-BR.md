@@ -10,7 +10,7 @@ Este documento identifica as principais origens do código de **CTF MPS KTX**. E
 
 Essa atribuição se refere ao projeto de adaptação e à sua manutenção. Não transfere nem substitui a autoria de KTX, MVDSV, ServerModules, QWProgs, id Software ou contribuições anteriores. Os avisos preexistentes permanecem nos arquivos correspondentes.
 
-A revisão e aprovação final necessárias para incorporar pull requests neste repositório cabem exclusivamente a [@fernandosalvatori](https://github.com/fernandosalvatori), conforme [CONTRIBUTING.md](../CONTRIBUTING.md). Essa política de manutenção não altera as licenças dos componentes.
+A revisão e aprovação final necessárias para incorporar pull requests neste repositório cabem exclusivamente a [@fernandosalvatori](https://github.com/fernandosalvatori), conforme [CONTRIBUTING.pt-BR.md](../CONTRIBUTING.pt-BR.md). Essa política de manutenção não altera as licenças dos componentes.
 
 ## KTX e código anterior
 
