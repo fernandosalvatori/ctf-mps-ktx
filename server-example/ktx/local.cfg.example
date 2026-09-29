@@ -1,0 +1,2 @@
+// Copie para local.cfg somente no servidor. Nunca versione senhas.
+rcon_password ""
