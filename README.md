@@ -2,6 +2,8 @@
 
 Porte das armas especiais do **CTFNormal / ServerModules** para **QuakeWorld**, usando **KTX 1.47** e **MVDSV 1.11**. O módulo é identificado como `1.47-ctfnormal.1` e acrescenta **Drone, Shrapnel e WeldGun**, com **Burn, as alterações de Lightning e o gancho original**.
 
+**Criador e mantenedor deste porte:** Fernando (Droni) Salvatori — [@fernandosalvatori](https://github.com/fernandosalvatori). **Publicação inicial do CTF MPS KTX: 28/09/2026.** Essa atribuição identifica a criação e manutenção do porte; a autoria preexistente de KTX, MVDSV, ServerModules e dos demais componentes permanece preservada.
+
 O CTF, a pontuação, o gerenciamento das equipes e o protocolo permanecem os do KTX/MVDSV. A configuração de exemplo não popula a partida com bots e mantém as runas desativadas. Este repositório reúne código, testes, documentação e configurações de exemplo; **não distribui PAKs, mapas, modelos, sons nem o executável da engine**.
 
 É uma adaptação em desenvolvimento: há testes automatizados dos módulos e testes na engine, mas **não foi demonstrada equivalência integral de uma partida ao NetQuake original nem concluído um teste visual com jogador humano**.
@@ -150,3 +152,9 @@ Veja [docs/CHANGES.md](docs/CHANGES.md) para fórmulas, pontos de integração, 
 Baseado em [KTX](https://github.com/QW-Group/ktx) e destinado a [MVDSV](https://github.com/QW-Group/mvdsv). Os módulos ServerModules portados são de **Johannes Plass, 1996–1997**, licenciados sob GPL versão 2 ou posterior. Os avisos do KTX, QWProgs e código derivado de id Software permanecem nos respectivos arquivos.
 
 Consulte [LICENSE.md](LICENSE.md) e [LICENSES/NOTICE.md](LICENSES/NOTICE.md). A licença do código não deve ser confundida com a licença dos dados externos do jogo. Este projeto não afirma aprovação ou integração nos projetos oficiais.
+
+## Contribuições e aprovação de PRs
+
+Pull requests exigem revisão e aprovação de **Fernando (Droni) Salvatori, [@fernandosalvatori](https://github.com/fernandosalvatori)**, antes da incorporação neste repositório. A aprovação final necessária é exclusiva do mantenedor; revisões de outras pessoas não a substituem.
+
+Consulte [CONTRIBUTING.md](CONTRIBUTING.md) para apresentar alterações, testes e limitações de forma revisável.
